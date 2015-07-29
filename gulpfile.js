@@ -1,4 +1,5 @@
 var gulp=require('gulp');
+var rename=require('gulp-rename');
 var plumber=require('gulp-plumber');
 var jade=require('gulp-jade');
 var sourcemaps=require('gulp-sourcemaps');
@@ -11,17 +12,22 @@ var jsSrc=[
 	'src/intro.js',
 	'src/html.js',
 	'src/main.js',
-	'src/outro.js'
+	'src/outro.js',
 ];
 var jsHtmlSrc=[
 	'src/html.js'
 ];
+var destination='public_html';
 
 gulp.task('empty-html',function(){
 	gulp.src('src/empty.jade')
 		.pipe(plumber())
+		.pipe(rename({
+			dirname: 'empty',
+			basename: 'index',
+		}))
 		.pipe(jade())
-		.pipe(gulp.dest('public_html/empty'));
+		.pipe(gulp.dest(destination));
 });
 
 gulp.task('static-html',function(){
@@ -31,20 +37,26 @@ gulp.task('static-html',function(){
 	});
 	gulp.src('src/static.jade')
 		.pipe(plumber())
+		.pipe(rename({
+			dirname: 'static',
+			basename: 'index',
+		}))
 		.pipe(jade({
 			locals: ctx
 		}))
-		.pipe(gulp.dest('public_html/static'));
+		.pipe(gulp.dest(destination));
 });
 
 gulp.task('js',function(){
 	gulp.src(jsSrc)
 		.pipe(plumber())
 		.pipe(sourcemaps.init())
-		.pipe(concat('index.js'))
+		.pipe(concat('statistics-classification-binary.js'))
 		.pipe(uglify())
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest('public_html/lib'));
+		.pipe(sourcemaps.write('.',{
+			sourceRoot: '../src'
+		}))
+		.pipe(gulp.dest(destination+'/lib'));
 });
 
 gulp.task('watch',function(){

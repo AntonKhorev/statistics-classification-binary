@@ -1,4 +1,4 @@
 $('.statistics-classification-binary').each(function(){
 	var containerNode=$(this);
-	containerNode.html(generateStaticHtml());
+	containerNode.html(generateSectionInside());
 });
