@@ -1,0 +1,10 @@
+{
+  "name": "statistics-classification-binary",
+  "private": true,
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jade": "^1.1.0",
+    "gulp-plumber": "^1.0.1"
+  }
+}
