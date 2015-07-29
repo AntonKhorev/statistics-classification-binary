@@ -1,7 +1,21 @@
+mixin wikipedia(url)
+	a(href=url)
+		block
 html(lang='en')
 	head
 		meta(charset='utf-8')
 		title Binary classification
 	body
-		code.
-			hello world
+		h1: +wikipedia('https://en.wikipedia.org/wiki/Binary_classification') Binary classification
+		p Input filename: #[code data.csv]
+		p Dependent variable: #[code y]
+		p Independent variables: the rest
+		table
+			tr
+				th: +wikipedia('https://en.wikipedia.org/wiki/Logistic_regression') Logistic regression
+			tr
+				td: code: pre.
+					# load data
+					data=read.csv('data.csv')
+					# build model
+					data.model=glm(y~.,data=data,family=binomial)
