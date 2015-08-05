@@ -26,80 +26,39 @@ var jsSrc=[].concat(
 );
 var destination='public_html';
 
-gulp.task('en-empty-html',function(){
-	var ctx={
-		pageLang: 'en',
-		pageTitle: 'Binary classification',
-		jsStub: 'javascript disabled',
+['en','ru'].forEach(function(lang){
+	var ctxs={
+		'en':{
+			pageLang: 'en',
+			pageTitle: 'Binary classification',
+			jsStub: 'javascript disabled',
+		},
+		'ru':{
+			pageLang: 'ru',
+			pageTitle: 'Бинарная классификация',
+			jsStub: 'javascript отключен',
+		},
 	};
-	gulp.src('src/empty.jade')
-		.pipe(plumber())
-		.pipe(rename({
-			dirname: 'en/empty',
-			basename: 'index',
-		}))
-		.pipe(jade({
-			locals: ctx
-		}))
-		.pipe(gulp.dest(destination));
-});
-
-gulp.task('ru-empty-html',function(){
-	var ctx={
-		pageLang: 'ru',
-		pageTitle: 'Бинарная классификация',
-		jsStub: 'javascript отключен',
-	};
-	gulp.src('src/empty.jade')
-		.pipe(plumber())
-		.pipe(rename({
-			dirname: 'ru/empty',
-			basename: 'index',
-		}))
-		.pipe(jade({
-			locals: ctx
-		}))
-		.pipe(gulp.dest(destination));
-});
-
-gulp.task('en-static-html',function(){
-	var ctx={
-		pageLang: 'en',
-		pageTitle: 'Binary classification',
-	};
-	jsHtmlSrc.forEach(function(src){
-		vm.runInNewContext(fs.readFileSync(src),ctx);
+	['empty','static'].forEach(function(template){
+		gulp.task(lang+'-'+template+'-html',function(){
+			var ctx=ctxs[lang];
+			if (template=='static') {
+				jsHtmlSrc.forEach(function(src){
+					vm.runInNewContext(fs.readFileSync(src),ctx);
+				});
+			}
+			gulp.src('src/'+template+'.jade')
+				.pipe(plumber())
+				.pipe(rename({
+					dirname: lang+'/'+template,
+					basename: 'index',
+				}))
+				.pipe(jade({
+					locals: ctx
+				}))
+				.pipe(gulp.dest(destination));
+		});
 	});
-	gulp.src('src/static.jade')
-		.pipe(plumber())
-		.pipe(rename({
-			dirname: 'en/static',
-			basename: 'index',
-		}))
-		.pipe(jade({
-			locals: ctx
-		}))
-		.pipe(gulp.dest(destination));
-});
-
-gulp.task('ru-static-html',function(){
-	var ctx={
-		pageLang: 'ru',
-		pageTitle: 'Бинарная классификация',
-	};
-	jsHtmlSrc.forEach(function(src){
-		vm.runInNewContext(fs.readFileSync(src),ctx);
-	});
-	gulp.src('src/static.jade')
-		.pipe(plumber())
-		.pipe(rename({
-			dirname: 'ru/static',
-			basename: 'index',
-		}))
-		.pipe(jade({
-			locals: ctx
-		}))
-		.pipe(gulp.dest(destination));
 });
 
 gulp.task('lib-js',function(){
