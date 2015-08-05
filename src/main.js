@@ -1,8 +1,8 @@
 $('.statistics-classification-binary').each(function(){
 	var containerNode=$(this);
-	var options={};
-	if (this.nodeName=='SECTION') {
-		options.heading=true;
-	}
+	var options={
+		heading: this.nodeName=='SECTION',
+		lang: containerNode.closest('[lang]').attr('lang'),
+	};
 	containerNode.html(generateHtml(options));
 });

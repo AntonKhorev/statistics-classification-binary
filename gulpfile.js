@@ -8,15 +8,22 @@ var uglify=require('gulp-uglify');
 var fs=require('fs');
 var vm=require('vm');
 
-var jsSrc=[
-	'src/intro.js',
-	'src/html.js',
-	'src/main.js',
-	'src/outro.js',
-];
 var jsHtmlSrc=[
-	'src/html.js'
+	'src/i18n.js',
+	'src/i18n/en.js',
+	'src/i18n/ru.js',
+	'src/html.js',
 ];
+var jsSrc=[].concat(
+	[
+		'src/intro.js',
+	],
+	jsHtmlSrc,
+	[
+		'src/main.js',
+		'src/outro.js',
+	]
+);
 var destination='public_html';
 
 gulp.task('empty-html',function(){
