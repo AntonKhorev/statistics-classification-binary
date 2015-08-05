@@ -25,30 +25,39 @@ var jsSrc=[].concat(
 	]
 );
 var destination='public_html';
+var pagesLangs=[
+	{ code: 'en', name: 'English' },
+	{ code: 'ru', name: 'Русский' },
+];
+var pagesTemplates=[
+	{ code: 'empty', name: 'Javascript only' },
+	{ code: 'static', name: 'Static HTML' },
+];
 
-['en','ru'].forEach(function(lang){
-	var ctxs={
-		'en':{
-			pageLang: 'en',
-			pageTitle: 'Binary classification',
-			jsStub: 'javascript disabled',
-		},
-		'ru':{
-			pageLang: 'ru',
-			pageTitle: 'Бинарная классификация',
-			jsStub: 'javascript отключен',
-		},
-	};
-	['empty','static'].forEach(function(template){
-		gulp.task(lang+'-'+template+'-html',function(){
-			var ctx=ctxs[lang];
-			ctx.pageTemplate=template;
-			if (template=='static') {
+pagesLangs.forEach(function(lang){
+	pagesTemplates.forEach(function(template){
+		var ctxs={
+			'en':{
+				pageTitle: 'Binary classification',
+				jsStub: 'javascript disabled',
+			},
+			'ru':{
+				pageTitle: 'Бинарная классификация',
+				jsStub: 'javascript отключен',
+			},
+		};
+		gulp.task(lang.code+'-'+template.code+'-html',function(){
+			var ctx=ctxs[lang.code];
+			ctx.pageLang=lang.code;
+			ctx.pageTemplate=template.code;
+			ctx.pagesLangs=pagesLangs;
+			ctx.pagesTemplates=pagesTemplates;
+			if (template.code=='static') {
 				jsHtmlSrc.forEach(function(src){
 					vm.runInNewContext(fs.readFileSync(src),ctx);
 				});
 			}
-			gulp.src('src/'+template+'.jade')
+			gulp.src('src/'+template.code+'.jade')
 				.pipe(plumber())
 				.pipe(rename({
 					basename: 'index'
@@ -56,7 +65,7 @@ var destination='public_html';
 				.pipe(jade({
 					locals: ctx
 				}))
-				.pipe(gulp.dest(destination+'/'+lang+'/'+template));
+				.pipe(gulp.dest(destination+'/'+lang.code+'/'+template.code));
 		});
 	});
 });

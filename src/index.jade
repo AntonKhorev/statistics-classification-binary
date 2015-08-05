@@ -6,8 +6,13 @@ html(lang=pageLang)
 		script(src='http://code.jquery.com/jquery-2.1.4.min.js')
 		script(src='../../lib/statistics-classification-binary.js')
 	body
-		nav: ul
-			each lang in [{ code: 'en', name: 'English' },{ code: 'ru', name: 'Русский' }]
+		nav
+			ul: each template in pagesTemplates
+				if pageTemplate==template.code
+					li= template.name
+				else
+					li: a(href='../'+template.code+'/')= template.name
+			ul: each lang in pagesLangs
 				if pageLang==lang.code
 					li= lang.name
 				else
