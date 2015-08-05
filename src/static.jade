@@ -1,9 +1,10 @@
-html(lang='en')
+doctype html
+html(lang=pageLang)
 	head
 		meta(charset='utf-8')
-		title Binary classification
+		title= pageTitle
 		script(src='http://code.jquery.com/jquery-2.1.4.min.js')
-		script(src='../lib/statistics-classification-binary.js')
+		script(src='../../lib/statistics-classification-binary.js')
 	body
 		section.statistics-classification-binary
-			!= generateHtml({heading:true})
+			!= generateHtml({heading:true,lang:pageLang})

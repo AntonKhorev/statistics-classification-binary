@@ -26,26 +26,16 @@ var jsSrc=[].concat(
 );
 var destination='public_html';
 
-gulp.task('empty-html',function(){
+gulp.task('en-empty-html',function(){
+	var ctx={
+		pageLang: 'en',
+		pageTitle: 'Binary classification',
+		jsStub: 'javascript disabled',
+	};
 	gulp.src('src/empty.jade')
 		.pipe(plumber())
 		.pipe(rename({
-			dirname: 'empty',
-			basename: 'index',
-		}))
-		.pipe(jade())
-		.pipe(gulp.dest(destination));
-});
-
-gulp.task('static-html',function(){
-	var ctx={};
-	jsHtmlSrc.forEach(function(src){
-		vm.runInNewContext(fs.readFileSync(src),ctx);
-	});
-	gulp.src('src/static.jade')
-		.pipe(plumber())
-		.pipe(rename({
-			dirname: 'static',
+			dirname: 'en/empty',
 			basename: 'index',
 		}))
 		.pipe(jade({
@@ -54,7 +44,65 @@ gulp.task('static-html',function(){
 		.pipe(gulp.dest(destination));
 });
 
-gulp.task('js',function(){
+gulp.task('ru-empty-html',function(){
+	var ctx={
+		pageLang: 'ru',
+		pageTitle: 'Бинарная классификация',
+		jsStub: 'javascript отключен',
+	};
+	gulp.src('src/empty.jade')
+		.pipe(plumber())
+		.pipe(rename({
+			dirname: 'ru/empty',
+			basename: 'index',
+		}))
+		.pipe(jade({
+			locals: ctx
+		}))
+		.pipe(gulp.dest(destination));
+});
+
+gulp.task('en-static-html',function(){
+	var ctx={
+		pageLang: 'en',
+		pageTitle: 'Binary classification',
+	};
+	jsHtmlSrc.forEach(function(src){
+		vm.runInNewContext(fs.readFileSync(src),ctx);
+	});
+	gulp.src('src/static.jade')
+		.pipe(plumber())
+		.pipe(rename({
+			dirname: 'en/static',
+			basename: 'index',
+		}))
+		.pipe(jade({
+			locals: ctx
+		}))
+		.pipe(gulp.dest(destination));
+});
+
+gulp.task('ru-static-html',function(){
+	var ctx={
+		pageLang: 'ru',
+		pageTitle: 'Бинарная классификация',
+	};
+	jsHtmlSrc.forEach(function(src){
+		vm.runInNewContext(fs.readFileSync(src),ctx);
+	});
+	gulp.src('src/static.jade')
+		.pipe(plumber())
+		.pipe(rename({
+			dirname: 'ru/static',
+			basename: 'index',
+		}))
+		.pipe(jade({
+			locals: ctx
+		}))
+		.pipe(gulp.dest(destination));
+});
+
+gulp.task('lib-js',function(){
 	gulp.src(jsSrc)
 		.pipe(plumber())
 		.pipe(sourcemaps.init())
@@ -67,9 +115,9 @@ gulp.task('js',function(){
 });
 
 gulp.task('watch',function(){
-	gulp.watch(['src/empty.jade'],['empty-html']);
-	gulp.watch(['src/static.jade',jsHtmlSrc],['static-html']);
-	gulp.watch(jsSrc,['js']);
+	gulp.watch(['src/empty.jade'],['en-empty-html','ru-empty-html']);
+	gulp.watch(['src/static.jade',jsHtmlSrc],['en-static-html','ru-static-html']);
+	gulp.watch(jsSrc,['lib-js']);
 });
 
-gulp.task('default',['empty-html','static-html','js']);
+gulp.task('default',['en-empty-html','ru-empty-html','en-static-html','ru-static-html','lib-js']);
