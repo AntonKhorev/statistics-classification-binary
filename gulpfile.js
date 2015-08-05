@@ -25,39 +25,57 @@ var jsSrc=[].concat(
 	]
 );
 var destination='public_html';
-var pagesLangs=[
-	{ code: 'en', name: 'English' },
-	{ code: 'ru', name: 'Русский' },
-];
-var pagesTemplates=[
-	{ code: 'empty', name: 'Javascript only' },
-	{ code: 'static', name: 'Static HTML' },
-];
+var langCodes=['en','ru'];
+var templateCodes=['empty','static'];
+var langData={
+	'en':{
+		name: 'English',
+		templateData: {
+			'empty': 'Javascript only',
+			'static': 'Static HTML',
+		},
+		pageTitle: 'Binary classification',
+		jsStub: 'javascript disabled',
+	},
+	'ru':{
+		name: 'Русский',
+		templateData: {
+			'empty': 'Только javascript',
+			'static': 'Статический HTML',
+		},
+		pageTitle: 'Бинарная классификация',
+		jsStub: 'javascript отключен',
+	},
+};
 
-pagesLangs.forEach(function(lang){
-	pagesTemplates.forEach(function(template){
-		var ctxs={
-			'en':{
-				pageTitle: 'Binary classification',
-				jsStub: 'javascript disabled',
-			},
-			'ru':{
-				pageTitle: 'Бинарная классификация',
-				jsStub: 'javascript отключен',
-			},
-		};
-		gulp.task(lang.code+'-'+template.code+'-html',function(){
-			var ctx=ctxs[lang.code];
-			ctx.pageLang=lang.code;
-			ctx.pageTemplate=template.code;
-			ctx.pagesLangs=pagesLangs;
-			ctx.pagesTemplates=pagesTemplates;
-			if (template.code=='static') {
+langCodes.forEach(function(lang){
+	templateCodes.forEach(function(template){
+		gulp.task(lang+'-'+template+'-html',function(){
+			var ld=langData[lang];
+			var ctx={
+				pageLang: lang,
+				pagesLangs: langCodes.map(function(l){
+					return {
+						code: l,
+						name: langData[l].name,
+					};
+				}),
+				pageTemplate: template,
+				pagesTemplates: templateCodes.map(function(t){
+					return {
+						code: t,
+						name: ld.templateData[t],
+					};
+				}),
+				pageTitle: ld.pageTitle,
+				jsStub: ld.jsStub,
+			};
+			if (template=='static') {
 				jsHtmlSrc.forEach(function(src){
 					vm.runInNewContext(fs.readFileSync(src),ctx);
 				});
 			}
-			gulp.src('src/'+template.code+'.jade')
+			gulp.src('src/'+template+'.jade')
 				.pipe(plumber())
 				.pipe(rename({
 					basename: 'index'
@@ -65,7 +83,7 @@ pagesLangs.forEach(function(lang){
 				.pipe(jade({
 					locals: ctx
 				}))
-				.pipe(gulp.dest(destination+'/'+lang.code+'/'+template.code));
+				.pipe(gulp.dest(destination+'/'+lang+'/'+template));
 		});
 	});
 });
