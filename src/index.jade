@@ -1,0 +1,17 @@
+doctype html
+html(lang=pageLang)
+	head
+		meta(charset='utf-8')
+		title= pageTitle
+		script(src='http://code.jquery.com/jquery-2.1.4.min.js')
+		script(src='../../lib/statistics-classification-binary.js')
+	body
+		nav: ul
+			each lang in [{ code: 'en', name: 'English' },{ code: 'ru', name: 'Русский' }]
+				if pageLang==lang.code
+					li= lang.name
+				else
+					li: a(href='../../'+lang.code+'/'+pageTemplate+'/',lang=lang.code,hreflang=lang.code)= lang.name
+		section.statistics-classification-binary
+			block contents
+				= jsStub
