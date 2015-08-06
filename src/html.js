@@ -15,8 +15,8 @@ function generateHtml(options) {
 	].join("\n");
 	return ""+
 		(options.heading?"<"+options.heading+">"+i18n.wikipedia('Binary classification')+"</"+options.heading+">":"")+
-		"<div>"+i18n('Input filename')+": <code>data.csv</code></div>"+
-		"<div>"+i18n('Formula')+": <code>y~.</code></div>"+
+		"<div data-option='filename'>"+i18n('Input filename')+": <code>data.csv</code></div>"+
+		"<div data-option='formula'>"+i18n('Formula')+": <code>y~.</code></div>"+
 		"<table>"+
 		"<tr><th>"+i18n.wikipedia('Logistic regression')+"</th></tr>"+
 		"<tr><td><code><pre>"+code+"</pre></code></td></tr>"+

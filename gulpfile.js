@@ -5,6 +5,9 @@ var jade=require('gulp-jade');
 var sourcemaps=require('gulp-sourcemaps');
 var concat=require('gulp-concat');
 var uglify=require('gulp-uglify');
+var less=require('gulp-less');
+var autoprefixer=require('gulp-autoprefixer');
+var minifyCss=require('gulp-minify-css');
 var fs=require('fs');
 var vm=require('vm');
 
@@ -24,6 +27,7 @@ var jsSrc=[].concat(
 		'src/outro.js',
 	]
 );
+var cssSrc='src/statistics-classification-binary.less';
 var destination='public_html';
 var langCodes=['en','ru'];
 var templateCodes=['empty','static'];
@@ -100,10 +104,24 @@ gulp.task('lib-js',function(){
 		.pipe(gulp.dest(destination+'/lib'));
 });
 
+gulp.task('lib-css',function(){
+	gulp.src(cssSrc)
+		.pipe(plumber())
+		.pipe(sourcemaps.init())
+		.pipe(less())
+		.pipe(autoprefixer())
+		.pipe(minifyCss())
+		.pipe(sourcemaps.write('.',{
+			sourceRoot: '../src'
+		}))
+		.pipe(gulp.dest(destination+'/lib'));
+});
+
 gulp.task('watch',function(){
 	gulp.watch(['src/index.jade','src/empty.jade'],['en-empty-html','ru-empty-html']);
 	gulp.watch(['src/index.jade','src/static.jade',jsHtmlSrc],['en-static-html','ru-static-html']);
 	gulp.watch(jsSrc,['lib-js']);
+	gulp.watch(cssSrc,['lib-css']);
 });
 
-gulp.task('default',['en-empty-html','ru-empty-html','en-static-html','ru-static-html','lib-js']);
+gulp.task('default',['en-empty-html','ru-empty-html','en-static-html','ru-static-html','lib-js','lib-css']);
