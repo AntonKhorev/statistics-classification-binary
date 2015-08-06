@@ -11,6 +11,14 @@ function getOptions(htmlOptions) {
 		code: {
 			filename: 'data.csv',
 			formula: 'y~.',
+			get varname(){
+				var i=this.filename.lastIndexOf('.');
+				if (i>0) {
+					return this.filename.substring(0,i);
+				} else {
+					return this.filename;
+				}
+			},
 		},
 		i18n: i18ns.get(htmlOptions.lang),
 	};
@@ -19,9 +27,9 @@ function getOptions(htmlOptions) {
 function generateCode(options) {
 	return [
 		"# "+options.i18n('load data'),
-		"data=read.csv('"+options.code.filename+"')",
+		options.code.varname+"=read.csv('"+options.code.filename+"')",
 		"# "+options.i18n('build model'),
-		"data.model=glm("+options.code.formula+",data=data,family=binomial)",
+		options.code.varname+".model=glm("+options.code.formula+",data="+options.code.varname+",family=binomial)",
 	].join("\n");
 }
 
