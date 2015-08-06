@@ -8,15 +8,15 @@ function generateHtml(options) {
 	}
 	var i18n=i18ns.get(options.lang);
 	var code=[
-		"# load data",
+		"# "+i18n('load data'),
 		"data=read.csv('data.csv')",
-		"# build model",
+		"# "+i18n('build model'),
 		"data.model=glm(y~.,data=data,family=binomial)",
 	].join("\n");
 	return ""+
 		(options.heading?"<"+options.heading+">"+i18n.wikipedia('Binary classification')+"</"+options.heading+">":"")+
-		"<div>Input filename: <code>data.csv</code></div>"+
-		"<div>Formula: <code>y~.</code></div>"+
+		"<div>"+i18n('Input filename')+": <code>data.csv</code></div>"+
+		"<div>"+i18n('Formula')+": <code>y~.</code></div>"+
 		"<table>"+
 		"<tr><th>"+i18n.wikipedia('Logistic regression')+"</th></tr>"+
 		"<tr><td><code><pre>"+code+"</pre></code></td></tr>"+
