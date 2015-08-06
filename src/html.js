@@ -44,7 +44,7 @@ function generateCode(options) {
 		options.code.data+".prob=predict("+options.code.data+".model,type='response')",
 		"# in-sample class prediction",
 		options.code.data+".class=+("+options.code.data+".prob>="+options.code.threshold+")", // TODO html-encode
-		"# in-sample accuracy", // TODO wiki link for accuracy
+		"# in-sample "+options.i18n.wikipedia('accuracy'),
 		options.code.data+".acc=mean("+options.code.data+"$"+options.code.y+"=="+options.code.data+".class)",
 	].join("\n");
 }

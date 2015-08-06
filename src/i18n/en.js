@@ -10,4 +10,6 @@ i18ns.data.en={
 	// code comments
 	'load data':'load data',
 	'build model':'build model',
+	'accuracy':'accuracy',
+	'accuracy|Wikipedia':'Accuracy_and_precision#In_binary_classification',
 };
