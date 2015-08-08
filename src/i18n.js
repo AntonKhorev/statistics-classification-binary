@@ -10,7 +10,7 @@ i18ns.get=function(lang) {
 		var sLang=lang;
 		if (s===undefined) {
 			s=i18ns.data[defaultLang][id];
-			// TODO set lang/hreflang attrs
+			// TODO set lang attrs
 			sLang=defaultLang;
 		}
 		if (s===undefined) {
@@ -26,7 +26,9 @@ i18ns.get=function(lang) {
 				link=p1.slice(0,i);
 				text=p1.slice(i+1);
 			}
-			return "<a href='https://"+sLang+".wikipedia.org/wiki/"+link.replace(/ /g,'_')+"'>"+text+"</a>";
+			return "<a href='https://"+sLang+".wikipedia.org/wiki/"+link.replace(/ /g,'_')+"'"+(
+				lang==sLang ? "" : " hreflang='"+sLang+"'"
+			)+">"+text+"</a>";
 		});
 	};
 };
