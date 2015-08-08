@@ -77,9 +77,9 @@ function generateHtml(options) {
 	return ""+
 		(options.html.heading?"<"+options.html.heading+">"+options.i18n.wikipedia('Binary classification')+"</"+options.html.heading+">":"")+
 		"<div class='code-options'>"+
-			"<div data-option='filename'>"+options.i18n('Input filename')+": <code>"+options.code.filename+"</code></div>"+
-			"<div data-option='formula'>"+options.i18n('Formula')+": <code>"+options.code.formula+"</code></div>"+
-			"<div data-option='threshold'>Class probability threshold: <code>"+options.code.threshold+"</code></div>"+
+			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+options.code.filename+"</code></div>"+
+			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+options.code.formula+"</code></div>"+
+			"<div class='code-input' data-option='threshold'><span class='label'>Class probability threshold:</span> <code>"+options.code.threshold+"</code></div>"+
 		"</div>"+
 		"<table>"+
 			"<tr><th>"+options.i18n.wikipedia('Logistic regression')+"</th></tr>"+

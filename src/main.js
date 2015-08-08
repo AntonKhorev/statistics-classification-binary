@@ -21,6 +21,8 @@ $('.statistics-classification-binary').each(function(){
 	containerNode.find('.code-options [data-option]').each(function(){
 		// TODO why parsing out stuff when can just regenerate with inputs instead of generateHtml() with static html?
 		var div=$(this);
+		var label=div.find('.label');
+		label.replaceWith("<label>"+label.html()+"</label>");
 		var optionName=div.attr('data-option');
 		var code=div.find('code');
 		var optionValue=code.text();
@@ -30,19 +32,20 @@ $('.statistics-classification-binary').each(function(){
 				applyCodeOptions();
 			})
 		);
-		div.wrapInner("<label>");
 	});
 	containerNode.find('.code-options').append(
-		$("<button type='button'>Reset options</button>").click(function(){
-			options.code.reset();
-			containerNode.find('.code-options [data-option]').each(function(){
-				var div=$(this);
-				var optionName=div.attr('data-option');
-				div.find('input').each(function(){
-					this.value=options.code[optionName];
+		$("<div class='code-input' />").append(
+			$("<button type='button'>Reset options</button>").click(function(){
+				options.code.reset();
+				containerNode.find('.code-options [data-option]').each(function(){
+					var div=$(this);
+					var optionName=div.attr('data-option');
+					div.find('input').each(function(){
+						this.value=options.code[optionName];
+					});
 				});
-			});
-			applyCodeOptions();
-		})
+				applyCodeOptions();
+			})
+		)
 	);
 });
