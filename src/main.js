@@ -17,7 +17,7 @@ $('.statistics-classification-binary').each(function(){
 		code.replaceWith(
 			$("<input type='text' value='"+optionValue+"' />").on('input',function(){
 				options.code[optionName]=this.value;
-				containerNode.find('table code pre').text(generateCode(options));
+				containerNode.find('table code pre').html(generateCode(options));
 				if (htmlOptions.storage) {
 					localStorage[htmlOptions.storage]=JSON.stringify(options.code);
 				}
