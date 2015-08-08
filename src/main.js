@@ -41,7 +41,7 @@ $('.statistics-classification-binary').each(function(){
 	});
 	containerNode.find('.code-options').append(
 		$("<div class='code-input' />").append(
-			$("<button type='button'>Reset options</button>").click(function(){
+			$("<button type='button'>"+options.i18n('Reset options')+"</button>").click(function(){
 				options.code.reset();
 				containerNode.find('.code-options [data-option]').each(function(){
 					var div=$(this);

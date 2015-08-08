@@ -64,9 +64,9 @@ function generateCode(options) {
 		options.code.data+"=read.csv('"+options.code.filename+"')",
 		"# "+options.i18n('build model'),
 		options.code.data+".model=glm("+options.code.formula+",data="+options.code.data+",family=binomial)",
-		"# in-sample probability prediction", // on complete dataset
+		"# "+options.i18n('in-sample probability prediction'), // on complete dataset
 		options.code.data+".prob=predict("+options.code.data+".model,type='response')",
-		"# in-sample class prediction",
+		"# "+options.i18n('in-sample class prediction'),
 		options.code.data+".class=+("+options.code.data+".prob>="+options.code.threshold+")", // TODO html-encode
 		"# "+options.i18n('in-sample accuracy'),
 		options.code.data+".acc=mean("+options.code.data+"$"+options.code.y+"=="+options.code.data+".class)",
@@ -79,7 +79,7 @@ function generateHtml(options) {
 		"<div class='code-options'>"+
 			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+options.code.filename+"</code></div>"+
 			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+options.code.formula+"</code></div>"+
-			"<div class='code-input' data-option='threshold'><span class='label'>Class probability threshold:</span> <code>"+options.code.threshold+"</code></div>"+
+			"<div class='code-input' data-option='threshold'><span class='label'>"+options.i18n('Classification probability threshold')+":</span> <code>"+options.code.threshold+"</code></div>"+
 		"</div>"+
 		"<table>"+
 			"<tr><th>"+options.i18n('Logistic regression')+"</th></tr>"+
