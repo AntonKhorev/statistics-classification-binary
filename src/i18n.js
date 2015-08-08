@@ -10,13 +10,13 @@ i18ns.get=function(lang) {
 		var sLang=lang;
 		if (s===undefined) {
 			s=i18ns.data[defaultLang][id];
-			// TODO set lang attrs
 			sLang=defaultLang;
 		}
 		if (s===undefined) {
 			s=id;
+			sLang=null;
 		}
-		return s.replace(/\[\[(.*?)\]\]/g,function(match,p1){
+		s=s.replace(/\[\[(.*?)\]\]/g,function(match,p1){
 			var link,text;
 			var i=p1.indexOf('|');
 			if (i<0) {
@@ -26,9 +26,16 @@ i18ns.get=function(lang) {
 				link=p1.slice(0,i);
 				text=p1.slice(i+1);
 			}
-			return "<a href='https://"+sLang+".wikipedia.org/wiki/"+link.replace(/ /g,'_')+"'"+(
-				lang==sLang ? "" : " hreflang='"+sLang+"'"
-			)+">"+text+"</a>";
+			var hreflang="";
+			if (sLang && lang!=sLang) {
+				hreflang=" hreflang='"+sLang+"'";
+			}
+			return "<a href='https://"+sLang+".wikipedia.org/wiki/"+link.replace(/ /g,'_')+"'"+hreflang+">"+text+"</a>";
 		});
+		if (sLang && lang!=sLang) {
+			return "<span lang='"+sLang+"'>"+s+"</span>";
+		} else {
+			return s;
+		}
 	};
 };
