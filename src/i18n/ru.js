@@ -1,9 +1,7 @@
 i18ns.data.ru={
 	// headers
 	'Binary classification':'Бинарная классификация',
-	'Binary classification|Wikipedia':false,
-	'Logistic regression':'Логистическая регрессия',
-	'Logistic regression|Wikipedia':true,
+	'Logistic regression':'[[Логистическая регрессия]]',
 	// input labels
 	'Input filename':'Имя входного файла',
 	'Formula':'Формула',

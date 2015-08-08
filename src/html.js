@@ -68,21 +68,21 @@ function generateCode(options) {
 		options.code.data+".prob=predict("+options.code.data+".model,type='response')",
 		"# in-sample class prediction",
 		options.code.data+".class=+("+options.code.data+".prob>="+options.code.threshold+")", // TODO html-encode
-		"# in-sample "+options.i18n.wikipedia('accuracy'),
+		"# "+options.i18n('in-sample accuracy'),
 		options.code.data+".acc=mean("+options.code.data+"$"+options.code.y+"=="+options.code.data+".class)",
 	].join("\n");
 }
 
 function generateHtml(options) {
 	return ""+
-		(options.html.heading?"<"+options.html.heading+">"+options.i18n.wikipedia('Binary classification')+"</"+options.html.heading+">":"")+
+		(options.html.heading?"<"+options.html.heading+">"+options.i18n('Binary classification')+"</"+options.html.heading+">":"")+
 		"<div class='code-options'>"+
 			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+options.code.filename+"</code></div>"+
 			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+options.code.formula+"</code></div>"+
 			"<div class='code-input' data-option='threshold'><span class='label'>Class probability threshold:</span> <code>"+options.code.threshold+"</code></div>"+
 		"</div>"+
 		"<table>"+
-			"<tr><th>"+options.i18n.wikipedia('Logistic regression')+"</th></tr>"+
+			"<tr><th>"+options.i18n('Logistic regression')+"</th></tr>"+
 			"<tr><td><code><pre>"+generateCode(options)+"</pre></code></td></tr>"+
 		"</table>"
 	;
