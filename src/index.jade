@@ -6,6 +6,30 @@ html(lang=pageLang)
 		link(rel='stylesheet',href='../../lib/statistics-classification-binary.css')
 		script(src='http://code.jquery.com/jquery-2.1.4.min.js')
 		script(src='../../lib/statistics-classification-binary.js')
+		style.
+			nav {
+				background: #BCF;
+			}
+			nav ul {
+				display: inline-block;
+				list-style: none;
+				padding: 0 0 0 2em;
+			}
+			nav ul:first-child {
+				padding: 0;
+			}
+			nav li {
+				display: inline-block;
+				padding: 0 0 0 1em;
+			}
+			nav li:first-child {
+				padding: 0;
+			}
+			@media print {
+				nav {
+					display: none;
+				}
+			}
 	body
 		nav
 			ul: each template in pagesTemplates
