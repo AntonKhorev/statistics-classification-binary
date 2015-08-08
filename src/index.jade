@@ -18,6 +18,6 @@ html(lang=pageLang)
 					li= lang.name
 				else
 					li: a(href='../../'+lang.code+'/'+pageTemplate+'/',lang=lang.code,hreflang=lang.code)= lang.name
-		section.statistics-classification-binary
+		section.statistics-classification-binary(data-storage='statistics-classification-binary')
 			block contents
 				= jsStub

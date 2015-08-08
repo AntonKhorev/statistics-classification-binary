@@ -1,35 +1,56 @@
-function getOptions(htmlOptions) {
-	if (htmlOptions===undefined) htmlOptions={};
-	if (!('heading' in htmlOptions)) {
-		htmlOptions.heading=false;
+// converts simple serializable option objects to one with functions
+function getOptions(userHtmlOptions,userCodeOptions) {
+	if (userHtmlOptions===undefined) userHtmlOptions={};
+	if (userCodeOptions===undefined) userCodeOptions={};
+	var k;
+
+	// htmlOptions are set by html page authors
+	var htmlOptions={};
+	for (k in userHtmlOptions) {
+		htmlOptions[k]=userHtmlOptions[k];
 	}
 	if (htmlOptions.heading==true) {
 		htmlOptions.heading='h1';
 	}
-	return {
-		html: htmlOptions,
-		code: {
-			filename: 'data.csv',
-			formula: 'y~.',
-			threshold: '0.5',
-			get data(){
-				var i=this.filename.lastIndexOf('.');
-				if (i>0) { // . exists and not 0th character
-					return this.filename.substring(0,i);
-				} else {
-					return this.filename;
-				}
-			},
-			get y(){
-				var i=this.formula.indexOf('~');
-                                if (i>=0) {
-					return this.formula.substring(0,i);
-				} else {
-					// TODO invalid formula, got to warn
-					return this.formula;
-				}
+
+	// codeOptions are set by html page users
+	var codeOptions={
+		filename: 'data.csv',
+		formula: 'y~.',
+		threshold: '0.5',
+		get data(){
+			var i=this.filename.lastIndexOf('.');
+			if (i>0) { // . exists and not 0th character
+				return this.filename.substring(0,i);
+			} else {
+				return this.filename;
 			}
 		},
+		get y(){
+			var i=this.formula.indexOf('~');
+			if (i>=0) {
+				return this.formula.substring(0,i);
+			} else {
+				// TODO invalid formula, got to warn
+				return this.formula;
+			}
+		},
+		toJSON:function(){
+			var savedProps=['filename','formula','threshold'];
+			var savedObject={};
+			savedProps.forEach(function(k){
+				savedObject[k]=this[k];
+			},this);
+			return savedObject;
+		}
+	};
+	for (k in userCodeOptions) {
+		codeOptions[k]=userCodeOptions[k];
+	}
+
+	return {
+		html: htmlOptions,
+		code: codeOptions,
 		i18n: i18ns.get(htmlOptions.lang),
 	};
 }
@@ -62,6 +83,6 @@ function generateHtml(options) {
 	;
 }
 
-function generateStaticHtml(htmlOptions) {
-	return generateHtml(getOptions(htmlOptions));
+function generateStaticHtml(htmlOptions,codeOptions) {
+	return generateHtml(getOptions(htmlOptions,codeOptions));
 }

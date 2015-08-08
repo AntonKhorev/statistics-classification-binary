@@ -1,9 +1,12 @@
 $('.statistics-classification-binary').each(function(){
 	var containerNode=$(this);
-	var options=getOptions({
+	var htmlOptions={
 		heading: this.nodeName=='SECTION',
 		lang: containerNode.closest('[lang]').attr('lang'),
-	});
+		storage: containerNode.attr('data-storage'),
+	};
+	var codeOptions=htmlOptions.storage&&JSON.parse(localStorage[htmlOptions.storage]);
+	var options=getOptions(htmlOptions,codeOptions);
 	containerNode.html(generateHtml(options));
 	containerNode.find('[data-option]').each(function(){
 		// TODO why parsing out stuff when can just regenerate with inputs instead of generateHtml() with static html?
@@ -15,6 +18,9 @@ $('.statistics-classification-binary').each(function(){
 			$("<input type='text' value='"+optionValue+"' />").on('input',function(){
 				options.code[optionName]=this.value;
 				containerNode.find('table code pre').text(generateCode(options));
+				if (htmlOptions.storage) {
+					localStorage[htmlOptions.storage]=JSON.stringify(options.code);
+				}
 			})
 		);
 		div.wrapInner("<label>");
