@@ -15,9 +15,6 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 
 	// codeOptions are set by html page users
 	var codeOptions={
-		filename: 'data.csv',
-		formula: 'y~.',
-		threshold: '0.5',
 		get data(){
 			var i=this.filename.lastIndexOf('.');
 			if (i>0) { // . exists and not 0th character
@@ -42,8 +39,14 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 				savedObject[k]=this[k];
 			},this);
 			return savedObject;
-		}
+		},
+		reset:function(){
+			this.filename='data.csv';
+			this.formula='y~.';
+			this.threshold='0.5';
+		},
 	};
+	codeOptions.reset();
 	for (k in userCodeOptions) {
 		codeOptions[k]=userCodeOptions[k];
 	}
@@ -73,12 +76,14 @@ function generateCode(options) {
 function generateHtml(options) {
 	return ""+
 		(options.html.heading?"<"+options.html.heading+">"+options.i18n.wikipedia('Binary classification')+"</"+options.html.heading+">":"")+
-		"<div data-option='filename'>"+options.i18n('Input filename')+": <code>"+options.code.filename+"</code></div>"+
-		"<div data-option='formula'>"+options.i18n('Formula')+": <code>"+options.code.formula+"</code></div>"+
-		"<div data-option='threshold'>Class probability threshold: <code>"+options.code.threshold+"</code></div>"+
+		"<div class='code-options'>"+
+			"<div data-option='filename'>"+options.i18n('Input filename')+": <code>"+options.code.filename+"</code></div>"+
+			"<div data-option='formula'>"+options.i18n('Formula')+": <code>"+options.code.formula+"</code></div>"+
+			"<div data-option='threshold'>Class probability threshold: <code>"+options.code.threshold+"</code></div>"+
+		"</div>"+
 		"<table>"+
-		"<tr><th>"+options.i18n.wikipedia('Logistic regression')+"</th></tr>"+
-		"<tr><td><code><pre>"+generateCode(options)+"</pre></code></td></tr>"+
+			"<tr><th>"+options.i18n.wikipedia('Logistic regression')+"</th></tr>"+
+			"<tr><td><code><pre>"+generateCode(options)+"</pre></code></td></tr>"+
 		"</table>"
 	;
 }
