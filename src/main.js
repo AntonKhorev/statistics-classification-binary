@@ -1,3 +1,8 @@
+var idCounter=0;
+function generateId() {
+	return 'statistics-classification-binary-id-'+(idCounter++);
+}
+
 $('.statistics-classification-binary').each(function(){
 	var containerNode=$(this);
 	var htmlOptions={
@@ -21,13 +26,14 @@ $('.statistics-classification-binary').each(function(){
 	containerNode.find('.code-options [data-option]').each(function(){
 		// TODO why parsing out stuff when can just regenerate with inputs instead of generateHtml() with static html?
 		var div=$(this);
+		var id=generateId();
 		var label=div.find('.label');
-		label.replaceWith("<label>"+label.html()+"</label>");
+		label.replaceWith("<label for='"+id+"'>"+label.html()+"</label>");
 		var optionName=div.attr('data-option');
 		var code=div.find('code');
 		var optionValue=code.text();
 		code.replaceWith(
-			$("<input type='text' value='"+optionValue+"' />").on('input',function(){
+			$("<input type='text' id='"+id+"' value='"+optionValue+"' />").on('input',function(){
 				options.code[optionName]=this.value;
 				applyCodeOptions();
 			})
