@@ -5,7 +5,10 @@ $('.statistics-classification-binary').each(function(){
 		lang: containerNode.closest('[lang]').attr('lang'),
 		storage: containerNode.attr('data-storage'),
 	};
-	var codeOptions=htmlOptions.storage&&JSON.parse(localStorage[htmlOptions.storage]);
+	var codeOptions={};
+	if (htmlOptions.storage && localStorage[htmlOptions.storage]) {
+		codeOptions=JSON.parse(localStorage[htmlOptions.storage]);
+	}
 	var options=getOptions(htmlOptions,codeOptions);
 	containerNode.html(generateHtml(options));
 
