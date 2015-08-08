@@ -13,17 +13,16 @@ html(lang=pageLang)
 			nav ul {
 				display: inline-block;
 				list-style: none;
-				padding: 0 0 0 2em;
-			}
-			nav ul:first-child {
-				padding: 0;
+				margin: 0;
+				padding: .5em;
 			}
 			nav li {
 				display: inline-block;
-				padding: 0 0 0 1em;
+				margin: 0;
+				padding: .5em;
 			}
-			nav li:first-child {
-				padding: 0;
+			nav li.active {
+				background: #FFF;
 			}
 			@media print {
 				nav {
@@ -34,12 +33,12 @@ html(lang=pageLang)
 		nav
 			ul: each template in pagesTemplates
 				if pageTemplate==template.code
-					li= template.name
+					li.active= template.name
 				else
 					li: a(href='../'+template.code+'/')= template.name
 			ul: each lang in pagesLangs
 				if pageLang==lang.code
-					li= lang.name
+					li.active= lang.name
 				else
 					li: a(href='../../'+lang.code+'/'+pageTemplate+'/',lang=lang.code,hreflang=lang.code)= lang.name
 		section.statistics-classification-binary(data-storage='statistics-classification-binary')
