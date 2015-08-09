@@ -1,7 +1,9 @@
 i18ns.data.en={
-	// headers
+	// header
 	'Binary classification':'[[Binary classification]]',
+	// models
 	'Logistic regression':'[[Logistic regression]]',
+	'Regression tree':'[[Decision tree learning|Regression tree]]',
 	// input labels
 	'Input filename':'Input filename',
 	'Formula':'Formula',

@@ -18,7 +18,7 @@ $('.statistics-classification-binary').each(function(){
 	containerNode.html(generateHtml(options));
 
 	function applyCodeOptions() {
-		containerNode.find('table code pre').html(generateCode(options));
+		containerNode.find('table').replaceWith(generateCodeTable(options));
 		if (options.html.storage) {
 			localStorage[options.html.storage]=JSON.stringify(options.code);
 		}
