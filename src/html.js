@@ -17,11 +17,22 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 	var codeOptions={
 		get data(){
 			var i=this.filename.lastIndexOf('.');
+			var dataname;
 			if (i>0) { // . exists and not 0th character
-				return this.filename.substring(0,i);
+				dataname=this.filename.substring(0,i);
 			} else {
-				return this.filename;
+				dataname=this.filename;
 			}
+			var o={
+				toString:function(){
+					return dataname;
+				},
+			};
+			['model','prob','class','acc','auc'].forEach(function(prop){
+				o[prop]=dataname+'.'+prop;
+			});
+
+			return o;
 		},
 		get y(){
 			var i=this.formula.indexOf('~');
@@ -59,28 +70,22 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 }
 
 function generateCode(options) {
-	function data(suffix) { // TODO data.prop instead of data('prop')
-		if (suffix) {
-			return options.code.data+'.'+suffix;
-		} else {
-			return options.code.data;
-		}
-	}
+	var data=options.code.data;
 	return [
 		"library(ROCR)", // for AUC computation
 		"",
 		"# "+options.i18n('load data'),
-		data()+"=read.csv('"+options.code.filename+"')",
+		data+"=read.csv('"+options.code.filename+"')",
 		"# "+options.i18n('build model'),
-		data('model')+"=glm("+options.code.formula+",data="+data()+",family=binomial)",
+		data.model+"=glm("+options.code.formula+",data="+data+",family=binomial)",
 		"# "+options.i18n('in-sample probability prediction'), // on complete dataset
-		data('prob')+"=predict("+data('model')+",type='response')",
+		data.prob+"=predict("+data.model+",type='response')",
 		"# "+options.i18n('in-sample class prediction'),
-		data('class')+"=+("+data('prob')+">="+options.code.threshold+")", // TODO html-encode
+		data['class']+"=+("+data.prob+">="+options.code.threshold+")", // TODO html-encode
 		"# "+options.i18n('in-sample accuracy'),
-		data('acc')+"=mean("+data()+"$"+options.code.y+"=="+data('class')+")",
+		data.acc+"=mean("+data+"$"+options.code.y+"=="+data['class']+")",
 		"# "+options.i18n('in-sample AUC'),
-		data('auc')+"=performance(prediction("+data('prob')+","+data()+"$"+options.code.y+"),'auc')@y.values[[1]]",
+		data.auc+"=performance(prediction("+data.prob+","+data+"$"+options.code.y+"),'auc')@y.values[[1]]",
 	].join("\n");
 }
 
