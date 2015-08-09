@@ -13,4 +13,5 @@ i18ns.data.en={
 	'in-sample probability prediction':'in-sample probability prediction',
 	'in-sample class prediction':'in-sample class prediction',
 	'in-sample accuracy':'in-sample [[Accuracy_and_precision#In_binary_classification|accuracy]]',
+	'in-sample AUC':'in-sample [[Receiver_operating_characteristic#Area_under_the_curve|AUC]]',
 };

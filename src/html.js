@@ -59,17 +59,28 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 }
 
 function generateCode(options) {
+	function data(suffix) { // TODO data.prop instead of data('prop')
+		if (suffix) {
+			return options.code.data+'.'+suffix;
+		} else {
+			return options.code.data;
+		}
+	}
 	return [
+		"library(ROCR)", // for AUC computation
+		"",
 		"# "+options.i18n('load data'),
-		options.code.data+"=read.csv('"+options.code.filename+"')",
+		data()+"=read.csv('"+options.code.filename+"')",
 		"# "+options.i18n('build model'),
-		options.code.data+".model=glm("+options.code.formula+",data="+options.code.data+",family=binomial)",
+		data('model')+"=glm("+options.code.formula+",data="+data()+",family=binomial)",
 		"# "+options.i18n('in-sample probability prediction'), // on complete dataset
-		options.code.data+".prob=predict("+options.code.data+".model,type='response')",
+		data('prob')+"=predict("+data('model')+",type='response')",
 		"# "+options.i18n('in-sample class prediction'),
-		options.code.data+".class=+("+options.code.data+".prob>="+options.code.threshold+")", // TODO html-encode
+		data('class')+"=+("+data('prob')+">="+options.code.threshold+")", // TODO html-encode
 		"# "+options.i18n('in-sample accuracy'),
-		options.code.data+".acc=mean("+options.code.data+"$"+options.code.y+"=="+options.code.data+".class)",
+		data('acc')+"=mean("+data()+"$"+options.code.y+"=="+data('class')+")",
+		"# "+options.i18n('in-sample AUC'),
+		data('auc')+"=performance(prediction("+data('prob')+","+data()+"$"+options.code.y+"),'auc')@y.values[[1]]",
 	].join("\n");
 }
 
