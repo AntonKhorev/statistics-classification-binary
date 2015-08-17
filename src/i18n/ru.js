@@ -2,9 +2,11 @@
 // http://www.machinelearning.ru
 // https://yandexdataschool.ru/edu-process/courses/machine-learning
 i18ns.data.ru={
-	// headers
+	// header
 	'Binary classification':'Бинарная классификация',
+	// models
 	'Logistic regression':'[[Логистическая регрессия]]',
+	'Regression tree':'[[Дерево принятия решений|Регрессионное дерево]]',
 	// input labels
 	'Input filename':'Имя входного файла',
 	'Formula':'Формула',
