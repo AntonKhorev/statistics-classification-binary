@@ -98,11 +98,23 @@ var models=[{
 		var data=options.code.data;
 		return [
 			"library(rpart)",
+			"library(ROCR)", // for AUC computation
 			"",
 			"# "+options.i18n('load data'), // TODO same
 			data+"=read.csv('"+options.code.filename+"')",
 			"# "+options.i18n('build model'),
 			data.model+"=rpart("+options.code.formula+",data="+data+")",
+			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
+			data.prob+"=predict("+data.model+")",
+			// TODO the same
+			"# "+options.i18n('in-sample class prediction'),
+			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
+			"# "+options.i18n('in-sample accuracy'),
+			data.acc+"=mean("+data+"$"+options.code.y+"=="+data['class']+")",
+			"# "+options.i18n('in-sample AUC'),
+			data.auc+"=performance(",
+			"\t"+"prediction("+data.prob+","+data+"$"+options.code.y+"),'auc'",
+			")@y.values[[1]]",
 		].join("\n");
 	},
 }];
