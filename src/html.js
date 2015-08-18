@@ -1,3 +1,11 @@
+function htmlEncode(value) {
+	// return $('<div/>').text(value).html(); // http://stackoverflow.com/a/1219983 - can't do it w/o jQuery
+	return value.toString()
+		.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+		.replace(/</g,'&lt;').replace(/>/g,'&gt;')
+	; // https://github.com/emn178/js-htmlencode/blob/master/src/htmlencode.js
+}
+
 // converts simple serializable option objects to one with functions
 function getOptions(userHtmlOptions,userCodeOptions) {
 	if (userHtmlOptions===undefined) userHtmlOptions={};
@@ -85,18 +93,18 @@ Model.prototype.generateLines=function(){
 	}).concat([
 		"",
 		"# "+i18n('load data'),
-		data+"=read.csv('"+code.filename+"')",
+		htmlEncode(data)+"=read.csv('"+htmlEncode(code.filename)+"')",
 	],code.postprocess?[
 		"# "+i18n('postprocess data'),
-		code.postprocess,
+		htmlEncode(code.postprocess),
 	]:[],this.generateModelProbLines(),[
 		"# "+i18n('in-sample class prediction'),
-		data['class']+"=+("+data.prob+">="+code.threshold+")",
+		htmlEncode(data['class'])+"=+("+htmlEncode(data.prob)+">="+htmlEncode(code.threshold)+")",
 		"# "+i18n('in-sample accuracy'),
-		data.acc+"=mean("+data+"$"+code.y+"=="+data['class']+")",
+		htmlEncode(data.acc)+"=mean("+htmlEncode(data)+"$"+htmlEncode(code.y)+"=="+htmlEncode(data['class'])+")",
 		"# "+i18n('in-sample AUC'),
-		data.auc+"=performance(",
-		"\t"+"prediction("+data.prob+","+data+"$"+code.y+"),'auc'",
+		htmlEncode(data.auc)+"=performance(",
+		"\t"+"prediction("+htmlEncode(data.prob)+","+htmlEncode(data)+"$"+htmlEncode(code.y)+"),'auc'",
 		")@y.values[[1]]",
 	]);
 };
@@ -119,7 +127,7 @@ BaselineModel.prototype.generateModelProbLines=function(){
 	return [
 		// no model
 		"# "+i18n('in-sample probability prediction'), // on complete dataset
-		data.prob+"=rep_len(mean("+data+"$"+code.y+"),nrow("+data+"))",
+		htmlEncode(data.prob)+"=rep_len(mean("+htmlEncode(data)+"$"+htmlEncode(code.y)+"),nrow("+htmlEncode(data)+"))",
 	];
 };
 
@@ -135,9 +143,9 @@ LogregModel.prototype.generateModelProbLines=function(){
 	var i18n=this.options.i18n;
 	return [
 		"# "+i18n('build model'),
-		data.model+"=glm("+code.formula+",data="+data+",family=binomial)",
+		htmlEncode(data.model)+"=glm("+htmlEncode(code.formula)+",data="+htmlEncode(data)+",family=binomial)",
 		"# "+i18n('in-sample probability prediction'), // on complete dataset
-		data.prob+"=predict("+data.model+",type='response')",
+		htmlEncode(data.prob)+"=predict("+htmlEncode(data.model)+",type='response')",
 	];
 };
 
@@ -153,9 +161,9 @@ CartModel.prototype.generateModelProbLines=function(){
 	var i18n=this.options.i18n;
 	return [
 		"# "+i18n('build model'),
-		data.model+"=rpart("+code.formula+",data="+data+")",
+		htmlEncode(data.model)+"=rpart("+htmlEncode(code.formula)+",data="+htmlEncode(data)+")",
 		"# "+i18n('in-sample probability prediction'), // on complete dataset
-		data.prob+"=predict("+data.model+")",
+		htmlEncode(data.prob)+"=predict("+htmlEncode(data.model)+")",
 	];
 };
 CartModel.prototype.listLibraries=function(){
@@ -186,10 +194,10 @@ function generateHtml(options) {
 	return ""+
 		(options.html.heading?"<"+options.html.heading+">"+options.i18n('Binary classification')+"</"+options.html.heading+">":"")+
 		"<div class='code-options'>"+
-			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+options.code.filename+"</code></div>"+
-			"<div class='code-input' data-option='postprocess'><span class='label'>"+options.i18n('Data postprocessing code')+":</span> <code>"+options.code.postprocess+"</code></div>"+
-			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+options.code.formula+"</code></div>"+
-			"<div class='code-input' data-option='threshold'><span class='label'>"+options.i18n('Classification probability threshold')+":</span> <code>"+options.code.threshold+"</code></div>"+
+			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+htmlEncode(options.code.filename)+"</code></div>"+
+			"<div class='code-input' data-option='postprocess'><span class='label'>"+options.i18n('Data postprocessing code')+":</span> <code>"+htmlEncode(options.code.postprocess)+"</code></div>"+
+			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+htmlEncode(options.code.formula)+"</code></div>"+
+			"<div class='code-input' data-option='threshold'><span class='label'>"+options.i18n('Classification probability threshold')+":</span> <code>"+htmlEncode(options.code.threshold)+"</code></div>"+
 		"</div>"+
 		generateCodeTable(options)
 	;

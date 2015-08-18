@@ -41,7 +41,7 @@ $('.statistics-classification-binary').each(function(){
 			inputTagOpen="<input type='number' min='0' max='1' step='any' value='";
 		}
 		code.replaceWith(
-			$(inputTagOpen+optionValue+inputTagClose).attr('id',id).on('input',function(){ // TODO htmlencode value
+			$(inputTagOpen+htmlEncode(optionValue)+inputTagClose).attr('id',id).on('input',function(){ // TODO htmlencode value
 				options.code[optionName]=this.value;
 				applyCodeOptions();
 			})
