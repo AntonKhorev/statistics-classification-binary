@@ -69,81 +69,102 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 	};
 }
 
-var models=[{
-	name: 'Baseline method',
-	generateCode: function(options){
-		var data=options.code.data;
-		return [
-			"library(ROCR)", // for AUC computation
-			"",
-			"# "+options.i18n('load data'),
-			data+"=read.csv('"+options.code.filename+"')",
-			// no model
-			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
-			data.prob+"=rep_len(mean("+data+"$"+options.code.y+"),nrow("+data+"))",
-			// TODO start of copypaste
-			"# "+options.i18n('in-sample class prediction'),
-			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
-			"# "+options.i18n('in-sample accuracy'),
-			data.acc+"=mean("+data+"$"+options.code.y+"=="+data['class']+")",
-			"# "+options.i18n('in-sample AUC'),
-			data.auc+"=performance(",
-			"\t"+"prediction("+data.prob+","+data+"$"+options.code.y+"),'auc'",
-			")@y.values[[1]]",
-		].join("\n");
-	},
-},{
-	name: 'Logistic regression',
-	generateCode: function(options){
-		var data=options.code.data;
-		return [
-			"library(ROCR)", // for AUC computation
-			"",
-			"# "+options.i18n('load data'),
-			data+"=read.csv('"+options.code.filename+"')",
-			"# "+options.i18n('build model'),
-			data.model+"=glm("+options.code.formula+",data="+data+",family=binomial)",
-			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
-			data.prob+"=predict("+data.model+",type='response')",
-			// TODO start of copypaste
-			"# "+options.i18n('in-sample class prediction'),
-			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
-			"# "+options.i18n('in-sample accuracy'),
-			data.acc+"=mean("+data+"$"+options.code.y+"=="+data['class']+")",
-			"# "+options.i18n('in-sample AUC'),
-			data.auc+"=performance(",
-			"\t"+"prediction("+data.prob+","+data+"$"+options.code.y+"),'auc'",
-			")@y.values[[1]]",
-		].join("\n");
-	},
-},{
-	name: 'Regression tree',
-	generateCode: function(options){
-		var data=options.code.data;
-		return [
-			"library(rpart)",
-			"library(ROCR)", // for AUC computation
-			"",
-			"# "+options.i18n('load data'), // TODO same
-			data+"=read.csv('"+options.code.filename+"')",
-			"# "+options.i18n('build model'),
-			data.model+"=rpart("+options.code.formula+",data="+data+")",
-			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
-			data.prob+"=predict("+data.model+")",
-			// TODO start of copypaste
-			"# "+options.i18n('in-sample class prediction'),
-			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
-			"# "+options.i18n('in-sample accuracy'),
-			data.acc+"=mean("+data+"$"+options.code.y+"=="+data['class']+")",
-			"# "+options.i18n('in-sample AUC'),
-			data.auc+"=performance(",
-			"\t"+"prediction("+data.prob+","+data+"$"+options.code.y+"),'auc'",
-			")@y.values[[1]]",
-		].join("\n");
-	},
-}];
+var Model=function(options){
+	this.options=options;
+};
+Model.prototype.generateCode=function(){
+	return this.generateLines().join("\n");
+};
+Model.prototype.generateLines=function(){
+	var code=this.options.code;
+	var data=code.data;
+	var i18n=this.options.i18n;
+	return this.listLibraries().map(function(lib){
+		return "library("+lib+")";
+	}).concat([
+		"",
+		"# "+i18n('load data'),
+		data+"=read.csv('"+code.filename+"')",
+	],this.generateModelProbLines(),[
+		"# "+i18n('in-sample class prediction'),
+		data['class']+"=+("+data.prob+">="+code.threshold+")",
+		"# "+i18n('in-sample accuracy'),
+		data.acc+"=mean("+data+"$"+code.y+"=="+data['class']+")",
+		"# "+i18n('in-sample AUC'),
+		data.auc+"=performance(",
+		"\t"+"prediction("+data.prob+","+data+"$"+code.y+"),'auc'",
+		")@y.values[[1]]",
+	]);
+};
+Model.prototype.listLibraries=function(){
+	return [
+		'ROCR', // for AUC computation
+	];
+}
+
+var BaselineModel=function(options){
+	Model.call(this,options);
+};
+BaselineModel.prototype=Object.create(Model.prototype);
+BaselineModel.prototype.constructor=BaselineModel;
+BaselineModel.prototype.name='Baseline method';
+BaselineModel.prototype.generateModelProbLines=function(){
+	var code=this.options.code;
+	var data=code.data;
+	var i18n=this.options.i18n;
+	return [
+		// no model
+		"# "+i18n('in-sample probability prediction'), // on complete dataset
+		data.prob+"=rep_len(mean("+data+"$"+code.y+"),nrow("+data+"))",
+	];
+};
+
+var LogregModel=function(options){
+	Model.call(this,options);
+};
+LogregModel.prototype=Object.create(Model.prototype);
+LogregModel.prototype.constructor=LogregModel;
+LogregModel.prototype.name='Logistic regression';
+LogregModel.prototype.generateModelProbLines=function(){
+	var code=this.options.code;
+	var data=code.data;
+	var i18n=this.options.i18n;
+	return [
+		"# "+i18n('build model'),
+		data.model+"=glm("+code.formula+",data="+data+",family=binomial)",
+		"# "+i18n('in-sample probability prediction'), // on complete dataset
+		data.prob+"=predict("+data.model+",type='response')",
+	];
+};
+
+var CartModel=function(options){
+	Model.call(this,options);
+};
+CartModel.prototype=Object.create(Model.prototype);
+CartModel.prototype.constructor=CartModel;
+CartModel.prototype.name='Regression tree';
+CartModel.prototype.generateModelProbLines=function(){
+	var code=this.options.code;
+	var data=code.data;
+	var i18n=this.options.i18n;
+	return [
+		"# "+i18n('build model'),
+		data.model+"=rpart("+code.formula+",data="+data+")",
+		"# "+i18n('in-sample probability prediction'), // on complete dataset
+		data.prob+"=predict("+data.model+")",
+	];
+};
+CartModel.prototype.listLibraries=function(){
+	return Model.prototype.listLibraries.call(this).concat([
+		'rpart',
+	]);
+};
 
 function generateCodeTable(options) {
+	var modelClasses=[BaselineModel,LogregModel,CartModel];
+	var models=modelClasses.map(function(modelClass){
+		return new modelClass(options);
+	});
 	return ""+
 		"<table><tr>"+
 			models.map(function(model){
@@ -151,7 +172,7 @@ function generateCodeTable(options) {
 			}).join("")+
 		"</tr><tr>"+
 			models.map(function(model){
-				return "<td><code><pre>"+model.generateCode(options)+"</pre></code></td>";
+				return "<td><code><pre>"+model.generateCode()+"</pre></code></td>";
 			}).join("")+
 		"</tr></table>"
 	;
