@@ -32,8 +32,16 @@ $('.statistics-classification-binary').each(function(){
 		var optionName=div.attr('data-option');
 		var code=div.find('code');
 		var optionValue=code.text();
+		var inputTagOpen="<input type='text' value='";
+		var inputTagClose="' />";
+		if (optionName=='postprocess') {
+			inputTagOpen="<textarea spellcheck='false'>";
+			inputTagClose="</textarea>";
+		} else if (optionName=='threshold') {
+			inputTagOpen="<input type='number' min='0' max='1' step='any' value='";
+		}
 		code.replaceWith(
-			$("<input type='text' id='"+id+"' value='"+optionValue+"' />").on('input',function(){
+			$(inputTagOpen+optionValue+inputTagClose).attr('id',id).on('input',function(){ // TODO htmlencode value
 				options.code[optionName]=this.value;
 				applyCodeOptions();
 			})

@@ -10,11 +10,13 @@ i18ns.data.ru={
 	'Regression tree':'[[Дерево принятия решений|Регрессионное дерево]]',
 	// input labels
 	'Input filename':'Имя входного файла',
+	'Data postprocessing code':'Код для обработки данных',
 	'Formula':'Формула',
 	'Classification probability threshold':'Порог на вероятность для классификации',
 	'Reset options':'Сбросить настройки',
 	// code comments
 	'load data':'загрузка данных',
+	'postprocess data':'обработка данных',
 	'build model':'построение модели',
 	'in-sample probability prediction':'предсказание вероятностей на выборке', // на обучающей выборке (а не на контрольной выборке)
 	'in-sample class prediction':'предсказание классов на выборке',

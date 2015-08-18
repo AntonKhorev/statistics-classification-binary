@@ -6,11 +6,13 @@ i18ns.data.en={
 	'Regression tree':'[[Decision tree learning|Regression tree]]',
 	// input labels
 	'Input filename':'Input filename',
+	'Data postprocessing code':'Data postprocessing code',
 	'Formula':'Formula',
 	'Classification probability threshold':'Classification probability threshold', // not quite sure
 	'Reset options':'Reset options',
 	// code comments
 	'load data':'load data',
+	'postprocess data':'postprocess data',
 	'build model':'build model',
 	'in-sample probability prediction':'in-sample probability prediction',
 	'in-sample class prediction':'in-sample class prediction',

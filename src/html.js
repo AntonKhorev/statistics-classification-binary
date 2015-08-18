@@ -44,7 +44,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			}
 		},
 		toJSON:function(){
-			var savedProps=['filename','formula','threshold'];
+			var savedProps=['filename','postprocess','formula','threshold'];
 			var savedObject={};
 			savedProps.forEach(function(k){
 				savedObject[k]=this[k];
@@ -53,6 +53,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 		},
 		reset:function(){
 			this.filename='data.csv';
+			this.postprocess='';
 			this.formula='y~.';
 			this.threshold='0.5';
 		},
@@ -85,7 +86,10 @@ Model.prototype.generateLines=function(){
 		"",
 		"# "+i18n('load data'),
 		data+"=read.csv('"+code.filename+"')",
-	],this.generateModelProbLines(),[
+	],code.postprocess?[
+		"# "+i18n('postprocess data'),
+		code.postprocess,
+	]:[],this.generateModelProbLines(),[
 		"# "+i18n('in-sample class prediction'),
 		data['class']+"=+("+data.prob+">="+code.threshold+")",
 		"# "+i18n('in-sample accuracy'),
@@ -183,6 +187,7 @@ function generateHtml(options) {
 		(options.html.heading?"<"+options.html.heading+">"+options.i18n('Binary classification')+"</"+options.html.heading+">":"")+
 		"<div class='code-options'>"+
 			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+options.code.filename+"</code></div>"+
+			"<div class='code-input' data-option='postprocess'><span class='label'>"+options.i18n('Data postprocessing code')+":</span> <code>"+options.code.postprocess+"</code></div>"+
 			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+options.code.formula+"</code></div>"+
 			"<div class='code-input' data-option='threshold'><span class='label'>"+options.i18n('Classification probability threshold')+":</span> <code>"+options.code.threshold+"</code></div>"+
 		"</div>"+
