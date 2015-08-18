@@ -70,6 +70,29 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 }
 
 var models=[{
+	name: 'Baseline method',
+	generateCode: function(options){
+		var data=options.code.data;
+		return [
+			"library(ROCR)", // for AUC computation
+			"",
+			"# "+options.i18n('load data'),
+			data+"=read.csv('"+options.code.filename+"')",
+			// no model
+			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
+			data.prob+"=rep_len(mean("+data+"$"+options.code.y+"),nrow("+data+"))",
+			// TODO start of copypaste
+			"# "+options.i18n('in-sample class prediction'),
+			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
+			"# "+options.i18n('in-sample accuracy'),
+			data.acc+"=mean("+data+"$"+options.code.y+"=="+data['class']+")",
+			"# "+options.i18n('in-sample AUC'),
+			data.auc+"=performance(",
+			"\t"+"prediction("+data.prob+","+data+"$"+options.code.y+"),'auc'",
+			")@y.values[[1]]",
+		].join("\n");
+	},
+},{
 	name: 'Logistic regression',
 	generateCode: function(options){
 		var data=options.code.data;
@@ -82,6 +105,7 @@ var models=[{
 			data.model+"=glm("+options.code.formula+",data="+data+",family=binomial)",
 			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
 			data.prob+"=predict("+data.model+",type='response')",
+			// TODO start of copypaste
 			"# "+options.i18n('in-sample class prediction'),
 			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
 			"# "+options.i18n('in-sample accuracy'),
@@ -106,7 +130,7 @@ var models=[{
 			data.model+"=rpart("+options.code.formula+",data="+data+")",
 			"# "+options.i18n('in-sample probability prediction'), // on complete dataset
 			data.prob+"=predict("+data.model+")",
-			// TODO the same
+			// TODO start of copypaste
 			"# "+options.i18n('in-sample class prediction'),
 			data['class']+"=+("+data.prob+">="+options.code.threshold+")",
 			"# "+options.i18n('in-sample accuracy'),

@@ -5,6 +5,7 @@ i18ns.data.ru={
 	// header
 	'Binary classification':'Бинарная классификация',
 	// models
+	'Baseline method':'Базовый метод', // [?]
 	'Logistic regression':'[[Логистическая регрессия]]',
 	'Regression tree':'[[Дерево принятия решений|Регрессионное дерево]]',
 	// input labels
