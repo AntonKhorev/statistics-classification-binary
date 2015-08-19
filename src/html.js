@@ -73,7 +73,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			this.formula='y~.';
 			this.threshold='0.5';
 		},
-		userOptionNames:['filename','postprocess','splitSeed','splitRatio','formula','threshold'],
+		userOptionNames:['filename','postprocess','formula','splitSeed','splitRatio','threshold'],
 	};
 	codeOptions.reset();
 	for (k in userCodeOptions) {

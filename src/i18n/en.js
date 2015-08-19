@@ -7,9 +7,9 @@ i18ns.data.en={
 	// input labels
 	'options.code.filename':'Input filename',
 	'options.code.postprocess':'Data postprocessing code',
+	'options.code.formula':'Formula',
 	'options.code.splitSeed':'[[Test set|Training/test set]] split seed',
 	'options.code.splitRatio':'[[Test set|Training/test set]] split ratio',
-	'options.code.formula':'Formula',
 	'options.code.threshold':'Classification probability threshold', // not quite sure
 	'Reset options':'Reset options',
 	// code comments
