@@ -196,6 +196,7 @@ function generateHtml(options) {
 		"<div class='code-options'>"+
 			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+htmlEncode(options.code.filename)+"</code></div>"+
 			"<div class='code-input' data-option='postprocess'><span class='label'>"+options.i18n('Data postprocessing code')+":</span> <code>"+htmlEncode(options.code.postprocess)+"</code></div>"+
+			// TODO train/test split
 			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+htmlEncode(options.code.formula)+"</code></div>"+
 			"<div class='code-input' data-option='threshold'><span class='label'>"+options.i18n('Classification probability threshold')+":</span> <code>"+htmlEncode(options.code.threshold)+"</code></div>"+
 		"</div>"+
