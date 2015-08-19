@@ -37,7 +37,9 @@ $('.statistics-classification-binary').each(function(){
 		if (optionName=='postprocess') {
 			inputTagOpen="<textarea spellcheck='false'>";
 			inputTagClose="</textarea>";
-		} else if (optionName=='threshold') {
+		} else if (optionName=='splitSeed') {
+			inputTagOpen="<input type='number' value='";
+		} else if (optionName=='splitRatio' || optionName=='threshold') {
 			inputTagOpen="<input type='number' min='0' max='1' step='any' value='";
 		}
 		code.replaceWith(

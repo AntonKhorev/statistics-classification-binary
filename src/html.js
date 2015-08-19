@@ -42,6 +42,9 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 
 			return o;
 		},
+		get needSplit(){
+			return this.splitRatio>0.0 && this.splitRatio<1.0;
+		},
 		get y(){
 			var i=this.formula.indexOf('~');
 			if (i>=0) {
@@ -52,9 +55,8 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			}
 		},
 		toJSON:function(){
-			var savedProps=['filename','postprocess','formula','threshold'];
 			var savedObject={};
-			savedProps.forEach(function(k){
+			this.userOptionNames.forEach(function(k){
 				savedObject[k]=this[k];
 			},this);
 			return savedObject;
@@ -62,9 +64,12 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 		reset:function(){
 			this.filename='data.csv';
 			this.postprocess='';
+			this.splitSeed='123';
+			this.splitRatio='0.7'; // 0.0 or 1.0 for no split
 			this.formula='y~.';
 			this.threshold='0.5';
 		},
+		userOptionNames:['filename','postprocess','splitSeed','splitRatio','formula','threshold'],
 	};
 	codeOptions.reset();
 	for (k in userCodeOptions) {
@@ -109,9 +114,14 @@ Model.prototype.generateLines=function(){
 	]);
 };
 Model.prototype.listLibraries=function(){
-	return [
+	libs=[
 		'ROCR', // for AUC computation
 	];
+	if (this.options.code.needSplit) {
+		libs.push('caTools');
+	}
+	return libs;
+	// TODO require libs from code
 }
 
 var BaselineModel=function(options){
@@ -194,11 +204,9 @@ function generateHtml(options) {
 	return ""+
 		(options.html.heading?"<"+options.html.heading+">"+options.i18n('Binary classification')+"</"+options.html.heading+">":"")+
 		"<div class='code-options'>"+
-			"<div class='code-input' data-option='filename'><span class='label'>"+options.i18n('Input filename')+":</span> <code>"+htmlEncode(options.code.filename)+"</code></div>"+
-			"<div class='code-input' data-option='postprocess'><span class='label'>"+options.i18n('Data postprocessing code')+":</span> <code>"+htmlEncode(options.code.postprocess)+"</code></div>"+
-			// TODO train/test split
-			"<div class='code-input' data-option='formula'><span class='label'>"+options.i18n('Formula')+":</span> <code>"+htmlEncode(options.code.formula)+"</code></div>"+
-			"<div class='code-input' data-option='threshold'><span class='label'>"+options.i18n('Classification probability threshold')+":</span> <code>"+htmlEncode(options.code.threshold)+"</code></div>"+
+			options.code.userOptionNames.map(function(optionName){
+				return "<div class='code-input' data-option='"+optionName+"'><span class='label'>"+options.i18n('options.code.'+optionName)+":</span> <code>"+htmlEncode(options.code[optionName])+"</code></div>";
+			}).join("")+
 		"</div>"+
 		generateCodeTable(options)
 	;

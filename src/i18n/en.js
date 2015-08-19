@@ -5,10 +5,12 @@ i18ns.data.en={
 	'Logistic regression':'[[Logistic regression]]',
 	'Regression tree':'[[Decision tree learning|Regression tree]]',
 	// input labels
-	'Input filename':'Input filename',
-	'Data postprocessing code':'Data postprocessing code',
-	'Formula':'Formula',
-	'Classification probability threshold':'Classification probability threshold', // not quite sure
+	'options.code.filename':'Input filename',
+	'options.code.postprocess':'Data postprocessing code',
+	'options.code.splitSeed':'[[Test set|Training/test set]] split seed',
+	'options.code.splitRatio':'[[Test set|Training/test set]] split ratio',
+	'options.code.formula':'Formula',
+	'options.code.threshold':'Classification probability threshold', // not quite sure
 	'Reset options':'Reset options',
 	// code comments
 	'load data':'load data',
