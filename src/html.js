@@ -36,14 +36,20 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 					return dataname;
 				},
 			};
-			[
-				'model',
-				'train','test',
-				'prob','class','acc','auc',
-			].forEach(function(prop){
+			['model','prob','class','acc','auc'].forEach(function(prop){
 				o[prop]=dataname+'.'+prop;
 			});
-
+			['train','test'].forEach(function(set){
+				o[set]={
+					toString:function(){
+						return dataname+'.'+set;
+					},
+				};
+				o[set].model=dataname+'.model'; // one model for both train/test sets
+				['prob','class','acc','auc'].forEach(function(prop){ // different data for train/test sets
+					o[set][prop]=dataname+'.'+set+'.'+prop;
+				});
+			});
 			return o;
 		},
 		get needSplit(){

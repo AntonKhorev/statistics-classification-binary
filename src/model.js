@@ -24,7 +24,7 @@ Model.prototype.generateLines=function(){
 		"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRatio)+")",
 		e(data.train)+"="+e(data)+"[split,]",
 		e(data.test)+"="+e(data)+"[!split,]",
-	]:[],this.generateModelProbLines(),[
+	]:[],this.generateModelProbLines(code.needSplit?data.train:data),[
 		"# "+i18n('in-sample class prediction'),
 		e(data['class'])+"=+("+e(data.prob)+">="+e(code.threshold)+")",
 		"# "+i18n('in-sample accuracy'),
@@ -52,10 +52,9 @@ var BaselineModel=function(options){
 BaselineModel.prototype=Object.create(Model.prototype);
 BaselineModel.prototype.constructor=BaselineModel;
 BaselineModel.prototype.name='Baseline method';
-BaselineModel.prototype.generateModelProbLines=function(){
+BaselineModel.prototype.generateModelProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var data=code.data;
 	var i18n=this.options.i18n;
 	return [
 		// no model
@@ -70,10 +69,9 @@ var LogregModel=function(options){
 LogregModel.prototype=Object.create(Model.prototype);
 LogregModel.prototype.constructor=LogregModel;
 LogregModel.prototype.name='Logistic regression';
-LogregModel.prototype.generateModelProbLines=function(){
+LogregModel.prototype.generateModelProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var data=code.data;
 	var i18n=this.options.i18n;
 	return [
 		"# "+i18n('build model'),
@@ -89,10 +87,9 @@ var CartModel=function(options){
 CartModel.prototype=Object.create(Model.prototype);
 CartModel.prototype.constructor=CartModel;
 CartModel.prototype.name='Regression tree';
-CartModel.prototype.generateModelProbLines=function(){
+CartModel.prototype.generateModelProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var data=code.data;
 	var i18n=this.options.i18n;
 	return [
 		"# "+i18n('build model'),
