@@ -55,6 +55,9 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 		get needSplit(){
 			return this.splitRatio>0.0 && this.splitRatio<1.0;
 		},
+		get needProb(){
+			return this.threshold>0.0 && this.threshold<1.0;
+		},
 		get y(){
 			var i=this.formula.indexOf('~');
 			if (i>=0) {
@@ -77,7 +80,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			this.splitSeed='123';
 			this.splitRatio='0.7'; // 0.0 or 1.0 for no split
 			this.formula='y~.';
-			this.threshold='0.5';
+			this.threshold='0.5'; // 0.0 or 1.0 for skipping probability predictions
 		},
 		userOptionNames:['filename','postprocess','formula','splitSeed','splitRatio','threshold'],
 	};

@@ -9,6 +9,40 @@ Model.prototype.generateLines=function(){
 	var code=this.options.code;
 	var data=code.data;
 	var lines=[];
+
+	function concatModelLines(data) {
+		var modelLines=this.generateModelLines(data);
+		if (modelLines.length) {
+			lines=lines.concat([this.comment('data.model')]);
+		}
+		lines=lines.concat(modelLines);
+	}
+	function concatPostModelLines(data,dataset) {
+		if (code.needProb) {
+			lines=lines.concat(
+				[this.comment(dataset+'.prob')],
+				this.generateProbLines(data),
+				[this.comment(dataset+'.class')],
+				this.generateClassFromProbLines(data)
+			);
+		} else {
+			lines=lines.concat(
+				[this.comment(dataset+'.class')],
+				this.generateClassDirectLines(data)
+			);
+		}
+		lines=lines.concat(
+			[this.comment(dataset+'.acc')],
+			this.generateAccLines(data)
+		);
+		if (code.needProb) {
+			lines=lines.concat(
+				[this.comment(dataset+'.auc')],
+				this.generateAucLines(data)
+			);
+		}
+	}
+
 	lines=lines.concat(this.listLibraries().map(function(lib){
 		return "library("+lib+")";
 	}),[
@@ -22,7 +56,6 @@ Model.prototype.generateLines=function(){
 			e(code.postprocess),
 		]);
 	}
-	var modelLines;
 	if (code.needSplit) {
 		lines=lines.concat([
 				this.comment('split'),
@@ -31,42 +64,33 @@ Model.prototype.generateLines=function(){
 				e(data.train)+"="+e(data)+"[split,]",
 				e(data.test)+"="+e(data)+"[!split,]",
 		]);
-		modelLines=this.generateModelLines(data.train);
-		if (modelLines.length) {
-			lines=lines.concat([this.comment('data.model')]);
-		}
-		lines=lines.concat(
-			modelLines,
-			[this.comment('data.train.prob')],
-			this.generateProbLines(data.train),
-			this.generateClassLines(data.train,'data.train'),
-			[this.comment('data.test.prob')],
-			this.generateProbLines(data.test),
-			this.generateClassLines(data.test,'data.test')
-		);
+		concatModelLines.call(this,data.train);
+		concatPostModelLines.call(this,data.train,'data.train');
+		concatPostModelLines.call(this,data.test,'data.test');
 	} else {
-		modelLines=this.generateModelLines(data);
-		if (modelLines.length) {
-			lines=lines.concat([this.comment('data.model')]);
-		}
-		lines=lines.concat(
-			modelLines,
-			[this.comment('data.prob')],
-			this.generateProbLines(data),
-			this.generateClassLines(data,'data')
-		);
+		concatModelLines(data);
+		concatPostModelLines.call(this,data,'data');
 	}
 	return lines;
 };
-Model.prototype.generateClassLines=function(data,dataset){
+Model.prototype.generateClassFromProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		this.comment(dataset+'.class'),
 		e(data['class'])+"=+("+e(data.prob)+">="+e(code.threshold)+")",
-		this.comment(dataset+'.acc'),
+	];
+};
+Model.prototype.generateAccLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
 		e(data.acc)+"=mean("+e(data)+"$"+e(code.y)+"=="+e(data['class'])+")",
-		this.comment(dataset+'.auc'),
+	];
+};
+Model.prototype.generateAucLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
 		e(data.auc)+"=performance(",
 		"\t"+"prediction("+e(data.prob)+","+e(data)+"$"+e(code.y)+"),'auc'",
 		")@y.values[[1]]",
@@ -102,6 +126,13 @@ BaselineModel.prototype.generateProbLines=function(data){
 		e(data.prob)+"=rep_len(mean("+e(data)+"$"+e(code.y)+"),nrow("+e(data)+"))",
 	];
 };
+BaselineModel.prototype.generateClassDirectLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data['class'])+"=rep_len(names(sort(-table("+e(data)+"$"+e(code.y)+")))[1],nrow("+e(data)+"))", // http://stackoverflow.com/a/2547551
+	];
+};
 
 var LogregModel=function(options){
 	Model.call(this,options);
@@ -121,6 +152,13 @@ LogregModel.prototype.generateProbLines=function(data){
 	var code=this.options.code;
 	return [
 		e(data.prob)+"=predict("+e(data.model)+",type='response')",
+	];
+};
+LogregModel.prototype.generateClassDirectLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		"# TODO",
 	];
 };
 
@@ -148,4 +186,11 @@ CartModel.prototype.listLibraries=function(){
 	return Model.prototype.listLibraries.call(this).concat([
 		'rpart',
 	]);
+};
+CartModel.prototype.generateClassDirectLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		"# TODO",
+	];
 };
