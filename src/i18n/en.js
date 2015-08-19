@@ -15,6 +15,7 @@ i18ns.data.en={
 	// code comments
 	'load data':'load data',
 	'postprocess data':'postprocess data',
+	'split data into training/test set':'split data into [[Test set|training/test set]]',
 	'build model':'build model',
 	'in-sample probability prediction':'in-sample probability prediction',
 	'in-sample class prediction':'in-sample class prediction',

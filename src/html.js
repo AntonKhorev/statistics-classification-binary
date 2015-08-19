@@ -36,7 +36,11 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 					return dataname;
 				},
 			};
-			['model','prob','class','acc','auc'].forEach(function(prop){
+			[
+				'model',
+				'train','test',
+				'prob','class','acc','auc',
+			].forEach(function(prop){
 				o[prop]=dataname+'.'+prop;
 			});
 
@@ -102,6 +106,12 @@ Model.prototype.generateLines=function(){
 	],code.postprocess?[
 		"# "+i18n('postprocess data'),
 		htmlEncode(code.postprocess),
+	]:[],code.needSplit?[
+		"# "+i18n('split data into training/test set'),
+		"set.seed("+htmlEncode(code.splitSeed)+")",
+		"split=sample.split("+htmlEncode(data)+"$"+htmlEncode(code.y)+",SplitRatio="+htmlEncode(code.splitRatio)+")",
+		htmlEncode(data.train)+"="+htmlEncode(data)+"[split,]",
+		htmlEncode(data.test)+"="+htmlEncode(data)+"[!split,]",
 	]:[],this.generateModelProbLines(),[
 		"# "+i18n('in-sample class prediction'),
 		htmlEncode(data['class'])+"=+("+htmlEncode(data.prob)+">="+htmlEncode(code.threshold)+")",

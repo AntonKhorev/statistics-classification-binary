@@ -23,6 +23,7 @@ i18ns.data.ru={
 	// code comments
 	'load data':'загрузка данных',
 	'postprocess data':'обработка данных',
+	'split data into training/test set':'деление данных на обучающую/тестовую выборку',
 	'build model':'построение модели',
 	'in-sample probability prediction':'предсказание вероятностей на выборке',
 	'in-sample class prediction':'предсказание классов на выборке',
