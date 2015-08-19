@@ -15,6 +15,7 @@ var jsHtmlSrc=[
 	'src/i18n.js',
 	'src/i18n/en.js',
 	'src/i18n/ru.js',
+	'src/model.js',
 	'src/html.js',
 ];
 var jsSrc=[].concat(
