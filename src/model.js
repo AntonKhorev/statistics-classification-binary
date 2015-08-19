@@ -11,11 +11,12 @@ Model.prototype.generateLines=function(){
 	var lines=[];
 
 	function concatModelLines(data) {
-		var modelLines=this.generateModelLines(data);
-		if (modelLines.length) {
-			lines=lines.concat([this.comment('data.model')]);
+		lines=lines.concat([this.comment('data.model')]);
+		if (code.needProb) {
+			lines=lines.concat(this.generateProbModelLines(data));
+		} else {
+			lines=lines.concat(this.generateClassModelLines(data));
 		}
-		lines=lines.concat(modelLines);
 	}
 	function concatPostModelLines(data,dataset) {
 		if (code.needProb) {
@@ -28,7 +29,7 @@ Model.prototype.generateLines=function(){
 		} else {
 			lines=lines.concat(
 				[this.comment(dataset+'.class')],
-				this.generateClassDirectLines(data)
+				this.generateClassFromModelLines(data)
 			);
 		}
 		lines=lines.concat(
@@ -58,17 +59,17 @@ Model.prototype.generateLines=function(){
 	}
 	if (code.needSplit) {
 		lines=lines.concat([
-				this.comment('split'),
-				"set.seed("+e(code.splitSeed)+")",
-				"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRatio)+")",
-				e(data.train)+"="+e(data)+"[split,]",
-				e(data.test)+"="+e(data)+"[!split,]",
+			this.comment('split'),
+			"set.seed("+e(code.splitSeed)+")",
+			"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRatio)+")",
+			e(data.train)+"="+e(data)+"[split,]",
+			e(data.test)+"="+e(data)+"[!split,]",
 		]);
 		concatModelLines.call(this,data.train);
 		concatPostModelLines.call(this,data.train,'data.train');
 		concatPostModelLines.call(this,data.test,'data.test');
 	} else {
-		concatModelLines(data);
+		concatModelLines.call(this,data);
 		concatPostModelLines.call(this,data,'data');
 	}
 	return lines;
@@ -116,21 +117,32 @@ var BaselineModel=function(options){
 BaselineModel.prototype=Object.create(Model.prototype);
 BaselineModel.prototype.constructor=BaselineModel;
 BaselineModel.prototype.name='Baseline method';
-BaselineModel.prototype.generateModelLines=function(data){
-	return []; // no model
+BaselineModel.prototype.generateProbModelLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data.model)+"=mean("+e(data)+"$"+e(code.y)+")",
+	];
+}
+BaselineModel.prototype.generateClassModelLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data.model)+"=names(sort(-table("+e(data)+"$"+e(code.y)+")))[1]", // http://stackoverflow.com/a/2547551
+	];
 }
 BaselineModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data.prob)+"=rep_len(mean("+e(data)+"$"+e(code.y)+"),nrow("+e(data)+"))",
+		e(data.prob)+"=rep_len("+e(data.model)+",nrow("+e(data)+"))",
 	];
 };
-BaselineModel.prototype.generateClassDirectLines=function(data){
+BaselineModel.prototype.generateClassFromModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data['class'])+"=rep_len(names(sort(-table("+e(data)+"$"+e(code.y)+")))[1],nrow("+e(data)+"))", // http://stackoverflow.com/a/2547551
+		e(data['class'])+"=rep_len("+e(data.model)+",nrow("+e(data)+"))",
 	];
 };
 
@@ -140,7 +152,8 @@ var LogregModel=function(options){
 LogregModel.prototype=Object.create(Model.prototype);
 LogregModel.prototype.constructor=LogregModel;
 LogregModel.prototype.name='Logistic regression';
-LogregModel.prototype.generateModelLines=function(data){
+LogregModel.prototype.generateProbModelLines=
+LogregModel.prototype.generateClassModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
@@ -154,7 +167,7 @@ LogregModel.prototype.generateProbLines=function(data){
 		e(data.prob)+"=predict("+e(data.model)+",type='response')",
 	];
 };
-LogregModel.prototype.generateClassDirectLines=function(data){
+LogregModel.prototype.generateClassFromModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
@@ -168,11 +181,18 @@ var CartModel=function(options){
 CartModel.prototype=Object.create(Model.prototype);
 CartModel.prototype.constructor=CartModel;
 CartModel.prototype.name='Regression tree';
-CartModel.prototype.generateModelLines=function(data){
+CartModel.prototype.generateProbModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
 		e(data.model)+"=rpart("+e(code.formula)+",data="+e(data)+")",
+	];
+};
+CartModel.prototype.generateClassModelLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data.model)+"=rpart("+e(code.formula)+",data="+e(data)+",method='class')",
 	];
 };
 CartModel.prototype.generateProbLines=function(data){
@@ -182,15 +202,15 @@ CartModel.prototype.generateProbLines=function(data){
 		e(data.prob)+"=predict("+e(data.model)+")",
 	];
 };
-CartModel.prototype.listLibraries=function(){
-	return Model.prototype.listLibraries.call(this).concat([
-		'rpart',
-	]);
-};
-CartModel.prototype.generateClassDirectLines=function(data){
+CartModel.prototype.generateClassFromModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
 		"# TODO",
 	];
+};
+CartModel.prototype.listLibraries=function(){
+	return Model.prototype.listLibraries.call(this).concat([
+		'rpart',
+	]);
 };
