@@ -8,25 +8,24 @@ Model.prototype.generateLines=function(){
 	var e=this.options.encode;
 	var code=this.options.code;
 	var data=code.data;
-	var i18n=this.options.i18n;
 	var lines=[];
 	lines=lines.concat(this.listLibraries().map(function(lib){
 		return "library("+lib+")";
 	}),[
 		"",
-		"# "+i18n('load data'),
+		this.comment('data'),
 		e(data)+"=read.csv('"+e(code.filename)+"')",
 	]);
 	if (code.postprocess) {
 		lines=lines.concat([
-			"# "+i18n('postprocess data'),
+			this.comment('postprocess'),
 			e(code.postprocess),
 		]);
 	}
 	var modelLines;
 	if (code.needSplit) {
 		lines=lines.concat([
-				"# "+i18n('split data into training/test set'),
+				this.comment('split'),
 				"set.seed("+e(code.splitSeed)+")",
 				"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRatio)+")",
 				e(data.train)+"="+e(data)+"[split,]",
@@ -34,41 +33,40 @@ Model.prototype.generateLines=function(){
 		]);
 		modelLines=this.generateModelLines(data.train);
 		if (modelLines.length) {
-			lines=lines.concat(["# "+i18n('build model')]);
+			lines=lines.concat([this.comment('data.model')]);
 		}
 		lines=lines.concat(
 			modelLines,
-			["# "+i18n('training set probability prediction')],
+			[this.comment('data.train.prob')],
 			this.generateProbLines(data.train),
-			this.generateClassLines(data.train),
-			["# "+i18n('test set probability prediction')],
+			this.generateClassLines(data.train,'data.train'),
+			[this.comment('data.test.prob')],
 			this.generateProbLines(data.test),
-			this.generateClassLines(data.test)
+			this.generateClassLines(data.test,'data.test')
 		);
 	} else {
 		modelLines=this.generateModelLines(data);
 		if (modelLines.length) {
-			lines=lines.concat(["# "+i18n('build model')]);
+			lines=lines.concat([this.comment('data.model')]);
 		}
 		lines=lines.concat(
 			modelLines,
-			["# "+i18n('in-sample probability prediction')],
+			[this.comment('data.prob')],
 			this.generateProbLines(data),
-			this.generateClassLines(data)
+			this.generateClassLines(data,'data')
 		);
 	}
 	return lines;
 };
-Model.prototype.generateClassLines=function(data){
+Model.prototype.generateClassLines=function(data,dataset){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var i18n=this.options.i18n;
 	return [
-		"# "+i18n('in-sample class prediction'),
+		this.comment(dataset+'.class'),
 		e(data['class'])+"=+("+e(data.prob)+">="+e(code.threshold)+")",
-		"# "+i18n('in-sample accuracy'),
+		this.comment(dataset+'.acc'),
 		e(data.acc)+"=mean("+e(data)+"$"+e(code.y)+"=="+e(data['class'])+")",
-		"# "+i18n('in-sample AUC'),
+		this.comment(dataset+'.auc'),
 		e(data.auc)+"=performance(",
 		"\t"+"prediction("+e(data.prob)+","+e(data)+"$"+e(code.y)+"),'auc'",
 		")@y.values[[1]]",
@@ -84,6 +82,9 @@ Model.prototype.listLibraries=function(){
 	return libs;
 	// TODO require libs from code
 }
+Model.prototype.comment=function(id){
+	return "# "+this.options.i18n('comment.'+id);
+}
 
 var BaselineModel=function(options){
 	Model.call(this,options);
@@ -97,7 +98,6 @@ BaselineModel.prototype.generateModelLines=function(data){
 BaselineModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var i18n=this.options.i18n;
 	return [
 		e(data.prob)+"=rep_len(mean("+e(data)+"$"+e(code.y)+"),nrow("+e(data)+"))",
 	];
@@ -112,7 +112,6 @@ LogregModel.prototype.name='Logistic regression';
 LogregModel.prototype.generateModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var i18n=this.options.i18n;
 	return [
 		e(data.model)+"=glm("+e(code.formula)+",data="+e(data)+",family=binomial)",
 	];
@@ -120,7 +119,6 @@ LogregModel.prototype.generateModelLines=function(data){
 LogregModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var i18n=this.options.i18n;
 	return [
 		e(data.prob)+"=predict("+e(data.model)+",type='response')",
 	];
@@ -135,7 +133,6 @@ CartModel.prototype.name='Regression tree';
 CartModel.prototype.generateModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var i18n=this.options.i18n;
 	return [
 		e(data.model)+"=rpart("+e(code.formula)+",data="+e(data)+")",
 	];
@@ -143,7 +140,6 @@ CartModel.prototype.generateModelLines=function(data){
 CartModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
-	var i18n=this.options.i18n;
 	return [
 		e(data.prob)+"=predict("+e(data.model)+")",
 	];
