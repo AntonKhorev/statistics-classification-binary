@@ -164,14 +164,14 @@ LogregModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data.prob)+"=predict("+e(data.model)+",type='response')",
+		e(data.prob)+"=predict("+e(data.model)+",newdata="+e(data)+",type='response')",
 	];
 };
 LogregModel.prototype.generateClassFromModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		"# TODO",
+		e(data['class'])+"=+(predict("+e(data.model)+",newdata="+e(data)+",type='response')>0.5)",
 	];
 };
 
@@ -199,14 +199,14 @@ CartModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data.prob)+"=predict("+e(data.model)+")",
+		e(data.prob)+"=predict("+e(data.model)+",newdata="+e(data)+")",
 	];
 };
 CartModel.prototype.generateClassFromModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		"# TODO",
+		e(data['class'])+"=predict("+e(data.model)+",newdata="+e(data)+",type='class')",
 	];
 };
 CartModel.prototype.listLibraries=function(){
