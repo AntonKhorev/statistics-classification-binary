@@ -4,6 +4,7 @@ i18ns.data.en={
 	// models
 	'Logistic regression':'[[Logistic regression]]',
 	'Regression tree':'[[Decision tree learning|Regression tree]]',
+	'Random forest':'[[Random forest]]',
 	// input labels
 	'options.code.filename':'Input filename',
 	'options.code.postprocess':'Data postprocessing code',
@@ -11,6 +12,7 @@ i18ns.data.en={
 	'options.code.splitSeed':'[[Test set|Training/test set]] split seed',
 	'options.code.splitRatio':'[[Test set|Training/test set]] split ratio',
 	'options.code.threshold':'Classification probability threshold', // not quite sure
+	'options.code.forestSeed':'Random forest seed',
 	'Reset options':'Reset options',
 	// code comments
 	'comment.data':'load data',

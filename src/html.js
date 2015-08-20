@@ -67,6 +67,15 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 				return this.formula;
 			}
 		},
+		get rhs(){
+			var i=this.formula.indexOf('~');
+			if (i>=0) {
+				return this.formula.substring(i+1);
+			} else {
+				// TODO invalid formula, got to warn
+				return this.formula;
+			}
+		},
 		toJSON:function(){
 			var savedObject={};
 			this.userOptionNames.forEach(function(k){
@@ -81,8 +90,9 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			this.splitRatio='0.7'; // 0.0 or 1.0 for no split
 			this.formula='y~.';
 			this.threshold='0.5'; // 0.0 or 1.0 for skipping probability predictions
+			this.forestSeed='456';
 		},
-		userOptionNames:['filename','postprocess','formula','splitSeed','splitRatio','threshold'],
+		userOptionNames:['filename','postprocess','formula','splitSeed','splitRatio','threshold','forestSeed'],
 	};
 	codeOptions.reset();
 	for (k in userCodeOptions) {
@@ -98,7 +108,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 }
 
 function generateCodeTable(options) {
-	var modelClasses=[BaselineModel,LogregModel,CartModel];
+	var modelClasses=[BaselineModel,LogregModel,CartModel,ForestModel];
 	var models=modelClasses.map(function(modelClass){
 		return new modelClass(options);
 	});

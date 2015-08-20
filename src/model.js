@@ -182,7 +182,7 @@ var CartModel=function(options){
 };
 CartModel.prototype=Object.create(Model.prototype);
 CartModel.prototype.constructor=CartModel;
-CartModel.prototype.name='Regression tree';
+CartModel.prototype.name='Regression tree'; // TODO rename to Classification tree if no probabilities are used
 CartModel.prototype.generateProbModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
@@ -214,5 +214,47 @@ CartModel.prototype.generateClassFromModelLines=function(data,isNewdata){
 CartModel.prototype.listLibraries=function(){
 	return Model.prototype.listLibraries.call(this).concat([
 		'rpart',
+	]);
+};
+
+var ForestModel=function(options){
+	Model.call(this,options);
+};
+ForestModel.prototype=Object.create(Model.prototype);
+ForestModel.prototype.constructor=ForestModel;
+ForestModel.prototype.name='Random forest';
+ForestModel.prototype.generateProbModelLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		"set.seed("+e(code.forestSeed)+")",
+		e(data.model)+"=randomForest("+e(code.formula)+",data="+e(data)+")",
+	];
+};
+ForestModel.prototype.generateClassModelLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		"set.seed("+e(code.forestSeed)+")",
+		e(data.model)+"=randomForest(as.factor("+e(code.y)+")~"+e(code.rhs)+",data="+e(data)+")",
+	];
+};
+ForestModel.prototype.generateProbLines=function(data,isNewdata){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data.prob)+"=predict("+e(data.model)+(isNewdata?",newdata="+e(data):"")+")",
+	];
+};
+ForestModel.prototype.generateClassFromModelLines=function(data,isNewdata){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data['class'])+"=predict("+e(data.model)+(isNewdata?",newdata="+e(data):"")+")",
+	];
+};
+ForestModel.prototype.listLibraries=function(){
+	return Model.prototype.listLibraries.call(this).concat([
+		'randomForest',
 	]);
 };
