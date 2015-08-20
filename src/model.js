@@ -19,17 +19,18 @@ Model.prototype.generateLines=function(){
 		}
 	}
 	function concatPostModelLines(data,dataset) {
+		var isNewdata=dataset=='data.test';
 		if (code.needProb) {
 			lines=lines.concat(
 				[this.comment(dataset+'.prob')],
-				this.generateProbLines(data),
+				this.generateProbLines(data,isNewdata),
 				[this.comment(dataset+'.class')],
 				this.generateClassFromProbLines(data)
 			);
 		} else {
 			lines=lines.concat(
 				[this.comment(dataset+'.class')],
-				this.generateClassFromModelLines(data)
+				this.generateClassFromModelLines(data,isNewdata)
 			);
 		}
 		lines=lines.concat(
@@ -161,18 +162,18 @@ LogregModel.prototype.generateClassModelLines=function(data){
 		e(data.model)+"=glm("+e(code.formula)+",data="+e(data)+",family=binomial)",
 	];
 };
-LogregModel.prototype.generateProbLines=function(data){
+LogregModel.prototype.generateProbLines=function(data,isNewdata){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data.prob)+"=predict("+e(data.model)+",newdata="+e(data)+",type='response')",
+		e(data.prob)+"=predict("+e(data.model)+(isNewdata?",newdata="+e(data):"")+",type='response')",
 	];
 };
-LogregModel.prototype.generateClassFromModelLines=function(data){
+LogregModel.prototype.generateClassFromModelLines=function(data,isNewdata){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data['class'])+"=+(predict("+e(data.model)+",newdata="+e(data)+",type='response')>0.5)",
+		e(data['class'])+"=+(predict("+e(data.model)+(isNewdata?",newdata="+e(data):"")+",type='response')>0.5)",
 	];
 };
 
@@ -196,18 +197,18 @@ CartModel.prototype.generateClassModelLines=function(data){
 		e(data.model)+"=rpart("+e(code.formula)+",data="+e(data)+",method='class')",
 	];
 };
-CartModel.prototype.generateProbLines=function(data){
+CartModel.prototype.generateProbLines=function(data,isNewdata){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data.prob)+"=predict("+e(data.model)+",newdata="+e(data)+")",
+		e(data.prob)+"=predict("+e(data.model)+(isNewdata?",newdata="+e(data):"")+")",
 	];
 };
-CartModel.prototype.generateClassFromModelLines=function(data){
+CartModel.prototype.generateClassFromModelLines=function(data,isNewdata){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data['class'])+"=predict("+e(data.model)+",newdata="+e(data)+",type='class')",
+		e(data['class'])+"=predict("+e(data.model)+(isNewdata?",newdata="+e(data):"")+",type='class')",
 	];
 };
 CartModel.prototype.listLibraries=function(){
