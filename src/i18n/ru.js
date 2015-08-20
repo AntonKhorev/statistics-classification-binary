@@ -12,10 +12,11 @@ i18ns.data.ru={
 	// header
 	'Binary classification':'Бинарная классификация',
 	// models
-	'Baseline method':'Базовый метод', // [?]
-	'Logistic regression':'[[Логистическая регрессия]]',
-	'Regression tree':'[[Дерево принятия решений|Регрессионное дерево]]',
-	'Random forest':'[[Random forest|Случайный лес]]',
+	'model.baseline':'Базовый метод', // [?]
+	'model.logreg':'[[Логистическая регрессия]]',
+	'model.cart.prob':'[[Дерево принятия решений|Регрессионное дерево]]',
+	'model.cart.class':'[[Дерево принятия решений|Классификационное дерево]]',
+	'model.forest':'[[Random forest|Случайный лес]]',
 	// input labels
 	'options.code.filename':'Имя входного файла',
 	'options.code.postprocess':'Код для обработки данных',

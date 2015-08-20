@@ -115,7 +115,7 @@ function generateCodeTable(options) {
 	return ""+
 		"<table><tr>"+
 			models.map(function(model){
-				return "<th>"+options.i18n(model.name)+"</th>";
+				return "<th>"+options.i18n(model.getNameId())+"</th>";
 			}).join("")+
 		"</tr><tr>"+
 			models.map(function(model){

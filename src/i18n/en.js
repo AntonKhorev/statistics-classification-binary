@@ -2,9 +2,11 @@ i18ns.data.en={
 	// header
 	'Binary classification':'[[Binary classification]]',
 	// models
-	'Logistic regression':'[[Logistic regression]]',
-	'Regression tree':'[[Decision tree learning|Regression tree]]',
-	'Random forest':'[[Random forest]]',
+	'model.baseline':'Baseline method',
+	'model.logreg':'[[Logistic regression]]',
+	'model.cart.prob':'[[Decision tree learning|Regression tree]]',
+	'model.cart.class':'[[Decision tree learning|Classification tree]]',
+	'model.forest':'[[Random forest]]',
 	// input labels
 	'options.code.filename':'Input filename',
 	'options.code.postprocess':'Data postprocessing code',

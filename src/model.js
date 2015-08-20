@@ -108,31 +108,33 @@ Model.prototype.listLibraries=function(){
 	}
 	return libs;
 	// TODO require libs from code
-}
+};
 Model.prototype.comment=function(id){
 	return "# "+this.options.i18n('comment.'+id);
-}
+};
 
 var BaselineModel=function(options){
 	Model.call(this,options);
 };
 BaselineModel.prototype=Object.create(Model.prototype);
 BaselineModel.prototype.constructor=BaselineModel;
-BaselineModel.prototype.name='Baseline method';
+BaselineModel.prototype.getNameId=function(){
+	return 'model.baseline';
+};
 BaselineModel.prototype.generateProbModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
 		e(data.model)+"=mean("+e(data)+"$"+e(code.y)+")",
 	];
-}
+};
 BaselineModel.prototype.generateClassModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
 		e(data.model)+"=names(sort(-table("+e(data)+"$"+e(code.y)+")))[1]", // http://stackoverflow.com/a/2547551
 	];
-}
+};
 BaselineModel.prototype.generateProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
@@ -153,7 +155,9 @@ var LogregModel=function(options){
 };
 LogregModel.prototype=Object.create(Model.prototype);
 LogregModel.prototype.constructor=LogregModel;
-LogregModel.prototype.name='Logistic regression';
+LogregModel.prototype.getNameId=function(){
+	return 'model.logreg';
+};
 LogregModel.prototype.generateProbModelLines=
 LogregModel.prototype.generateClassModelLines=function(data){
 	var e=this.options.encode;
@@ -182,7 +186,13 @@ var CartModel=function(options){
 };
 CartModel.prototype=Object.create(Model.prototype);
 CartModel.prototype.constructor=CartModel;
-CartModel.prototype.name='Regression tree'; // TODO rename to Classification tree if no probabilities are used
+CartModel.prototype.getNameId=function(){
+	if (this.options.code.needProb) {
+		return 'model.cart.prob';
+	} else {
+		return 'model.cart.class';
+	}
+};
 CartModel.prototype.generateProbModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
@@ -222,7 +232,9 @@ var ForestModel=function(options){
 };
 ForestModel.prototype=Object.create(Model.prototype);
 ForestModel.prototype.constructor=ForestModel;
-ForestModel.prototype.name='Random forest';
+ForestModel.prototype.getNameId=function(){
+	return 'model.forest';
+};
 ForestModel.prototype.generateProbModelLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
