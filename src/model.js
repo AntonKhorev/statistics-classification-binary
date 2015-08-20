@@ -98,9 +98,10 @@ Model.prototype.generateAucLines=function(data){
 	];
 };
 Model.prototype.listLibraries=function(){
-	libs=[
-		'ROCR', // for AUC computation
-	];
+	libs=[];
+	if (this.options.code.needProb) {
+		libs.push('ROCR'); // for AUC computation
+	}
 	if (this.options.code.needSplit) {
 		libs.push('caTools');
 	}
