@@ -130,7 +130,10 @@ function generateHtml(options) {
 		(options.html.heading?"<"+options.html.heading+">"+options.i18n('Binary classification')+"</"+options.html.heading+">":"")+
 		"<div class='code-options'>"+
 			options.code.userOptionNames.map(function(optionName){
-				return "<div class='code-input' data-option='"+optionName+"'><span class='label'>"+options.i18n('options.code.'+optionName)+":</span> <code>"+htmlEncode(options.code[optionName])+"</code></div>";
+				return "<div class='code-input' data-option='"+optionName+"'>"+
+					"<span class='label'"+(optionName=='splitRatio'||optionName=='threshold'?" title='"+options.i18n('options.code.'+optionName+'.title')+"'":"")+">"+options.i18n('options.code.'+optionName)+":</span> "+
+					"<code>"+htmlEncode(options.code[optionName])+"</code>"+
+					"</div>";
 			}).join("")+
 		"</div>"+
 		generateCodeTable(options)

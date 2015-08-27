@@ -23,7 +23,9 @@ i18ns.data.ru={
 	'options.code.formula':'Формула',
 	'options.code.splitSeed':'Инициализация (seed) деления на обучающую/тестовую выборку', // http://www.machinelearning.ru/wiki/index.php?title=%D0%92%D1%8B%D0%B1%D0%BE%D1%80%D0%BA%D0%B0
 	'options.code.splitRatio':'Доля обучающей выборки при делении',
+	'options.code.splitRatio.title':'При значениях 0 и 1 деление выполняться не будет',
 	'options.code.threshold':'Порог на вероятность для классификации',
+	'options.code.threshold.title':'При значениях 0 и 1 вероятности и AUC&#39;и вычисляться не будут',
 	'options.code.forestSeed':'Инициализация (seed) случайного леса',
 	'Reset options':'Сбросить настройки',
 	// code comments

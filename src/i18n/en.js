@@ -13,7 +13,9 @@ i18ns.data.en={
 	'options.code.formula':'Formula',
 	'options.code.splitSeed':'[[Test set|Training/test set]] split seed',
 	'options.code.splitRatio':'[[Test set|Training/test set]] split ratio',
+	'options.code.splitRatio.title':'Set to 0 or 1 to avoid splitting',
 	'options.code.threshold':'Classification probability threshold', // not quite sure
+	'options.code.threshold.title':'Set to 0 or 1 to avoid calculating probabilities and AUCs',
 	'options.code.forestSeed':'Random forest seed',
 	'Reset options':'Reset options',
 	// code comments

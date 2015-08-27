@@ -28,7 +28,12 @@ $('.statistics-classification-binary').each(function(){
 		var div=$(this);
 		var id=generateId();
 		var label=div.find('.label');
-		label.replaceWith("<label for='"+id+"'>"+label.html()+"</label>");
+		var labelTitle=label.attr('title');
+		var newLabel=$("<label for='"+id+"'>"+label.html()+"</label>");
+		if (labelTitle) {
+			newLabel.attr('title',labelTitle);
+		}
+		label.replaceWith(newLabel);
 		var optionName=div.attr('data-option');
 		var code=div.find('code');
 		var optionValue=code.text();
