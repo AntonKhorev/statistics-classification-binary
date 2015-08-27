@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Binary classification</title><link rel="stylesheet" href="../../lib/statistics-classification-binary.css"><script src="http://code.jquery.com/jquery-2.1.4.min.js"></script><script src="../../lib/statistics-classification-binary.js"></script><style>nav {
+	background: #BCF;
+	overflow: auto;
+}
+nav ul {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: .5em;
+}
+nav ul.external {
+	float: right;
+}
+nav li {
+	display: inline-block;
+	margin: 0;
+	padding: .5em;
+}
+nav li.active {
+	background: #FFF;
+}
+@media print {
+	nav {
+		display: none;
+	}
+}</style></head><body><nav><ul><li><a href="../empty/">Javascript only</a></li><li class="active">Static HTML</li></ul><ul><li class="active">English</li><li><a href="../../ru/static/" lang="ru" hreflang="ru">Русский</a></li></ul><ul class="external"><li><a href="https://github.com/AntonKhorev/statistics-classification-binary">source code</a></li><li><a href="https://github.com/AntonKhorev/statistics-classification-binary/issues">report issues</a></li></ul></nav><section data-storage="statistics-classification-binary" class="statistics-classification-binary"><h1><a href='https://en.wikipedia.org/wiki/Binary_classification'>Binary classification</a></h1><div class='code-options'><div class='code-input' data-option='filename'><span class='label'>Input filename:</span> <code>data.csv</code></div><div class='code-input' data-option='postprocess'><span class='label'>Data postprocessing code:</span> <code></code></div><div class='code-input' data-option='formula'><span class='label'>Formula:</span> <code>y~.</code></div><div class='code-input' data-option='splitSeed'><span class='label'><a href='https://en.wikipedia.org/wiki/Test_set'>Training/test set</a> split seed:</span> <code>123</code></div><div class='code-input' data-option='splitRatio'><span class='label' title='Set to 0 or 1 to avoid splitting'><a href='https://en.wikipedia.org/wiki/Test_set'>Training/test set</a> split ratio:</span> <code>0.7</code></div><div class='code-input' data-option='threshold'><span class='label' title='Set to 0 or 1 to avoid calculating probabilities and AUCs'>Classification probability threshold:</span> <code>0.5</code></div><div class='code-input' data-option='forestSeed'><span class='label'>Random forest seed:</span> <code>456</code></div></div><table><tr><th>Baseline method</th><th><a href='https://en.wikipedia.org/wiki/Logistic_regression'>Logistic regression</a></th><th><a href='https://en.wikipedia.org/wiki/Decision_tree_learning'>Regression tree</a></th><th><a href='https://en.wikipedia.org/wiki/Random_forest'>Random forest</a></th></tr><tr><td><code><pre>library(ROCR)
+library(caTools)
+
+# load data
+data=read.csv('data.csv')
+# split data into <a href='https://en.wikipedia.org/wiki/Test_set'>training/test set</a>
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# build model
+data.model=mean(data.train$y)
+# training set probability prediction
+data.train.prob=rep_len(data.model,nrow(data.train))
+# training set class prediction
+data.train.class=+(data.train.prob>=0.5)
+# training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# test set probability prediction
+data.test.prob=rep_len(data.model,nrow(data.test))
+# test set class prediction
+data.test.class=+(data.test.prob>=0.5)
+# test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td><td><code><pre>library(ROCR)
+library(caTools)
+
+# load data
+data=read.csv('data.csv')
+# split data into <a href='https://en.wikipedia.org/wiki/Test_set'>training/test set</a>
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# build model
+data.model=glm(y~.,data=data.train,family=binomial)
+# training set probability prediction
+data.train.prob=predict(data.model,type='response')
+# training set class prediction
+data.train.class=+(data.train.prob>=0.5)
+# training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# test set probability prediction
+data.test.prob=predict(data.model,newdata=data.test,type='response')
+# test set class prediction
+data.test.class=+(data.test.prob>=0.5)
+# test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td><td><code><pre>library(ROCR)
+library(caTools)
+library(rpart)
+
+# load data
+data=read.csv('data.csv')
+# split data into <a href='https://en.wikipedia.org/wiki/Test_set'>training/test set</a>
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# build model
+data.model=rpart(y~.,data=data.train)
+# training set probability prediction
+data.train.prob=predict(data.model)
+# training set class prediction
+data.train.class=+(data.train.prob>=0.5)
+# training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# test set probability prediction
+data.test.prob=predict(data.model,newdata=data.test)
+# test set class prediction
+data.test.class=+(data.test.prob>=0.5)
+# test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td><td><code><pre>library(ROCR)
+library(caTools)
+library(randomForest)
+
+# load data
+data=read.csv('data.csv')
+# split data into <a href='https://en.wikipedia.org/wiki/Test_set'>training/test set</a>
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# build model
+set.seed(456)
+data.model=randomForest(y~.,data=data.train)
+# training set probability prediction
+data.train.prob=predict(data.model)
+# training set class prediction
+data.train.class=+(data.train.prob>=0.5)
+# training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# test set probability prediction
+data.test.prob=predict(data.model,newdata=data.test)
+# test set class prediction
+data.test.class=+(data.test.prob>=0.5)
+# test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
+data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td></tr></table></section></body></html>

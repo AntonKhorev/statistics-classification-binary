@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>Бинарная классификация</title><link rel="stylesheet" href="../../lib/statistics-classification-binary.css"><script src="http://code.jquery.com/jquery-2.1.4.min.js"></script><script src="../../lib/statistics-classification-binary.js"></script><style>nav {
+	background: #BCF;
+	overflow: auto;
+}
+nav ul {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: .5em;
+}
+nav ul.external {
+	float: right;
+}
+nav li {
+	display: inline-block;
+	margin: 0;
+	padding: .5em;
+}
+nav li.active {
+	background: #FFF;
+}
+@media print {
+	nav {
+		display: none;
+	}
+}</style></head><body><nav><ul><li><a href="../empty/">Только javascript</a></li><li class="active">Статический HTML</li></ul><ul><li><a href="../../en/static/" lang="en" hreflang="en">English</a></li><li class="active">Русский</li></ul><ul class="external"><li><a href="https://github.com/AntonKhorev/statistics-classification-binary">source code</a></li><li><a href="https://github.com/AntonKhorev/statistics-classification-binary/issues">report issues</a></li></ul></nav><section data-storage="statistics-classification-binary" class="statistics-classification-binary"><h1>Бинарная классификация</h1><div class='code-options'><div class='code-input' data-option='filename'><span class='label'>Имя входного файла:</span> <code>data.csv</code></div><div class='code-input' data-option='postprocess'><span class='label'>Код для обработки данных:</span> <code></code></div><div class='code-input' data-option='formula'><span class='label'>Формула:</span> <code>y~.</code></div><div class='code-input' data-option='splitSeed'><span class='label'>Инициализация (seed) деления на обучающую/тестовую выборку:</span> <code>123</code></div><div class='code-input' data-option='splitRatio'><span class='label' title='При значениях 0 и 1 деление выполняться не будет'>Доля обучающей выборки при делении:</span> <code>0.7</code></div><div class='code-input' data-option='threshold'><span class='label' title='При значениях 0 и 1 вероятности и AUC&#39;и вычисляться не будут'>Порог на вероятность для классификации:</span> <code>0.5</code></div><div class='code-input' data-option='forestSeed'><span class='label'>Инициализация (seed) случайного леса:</span> <code>456</code></div></div><table><tr><th>Базовый метод</th><th><a href='https://ru.wikipedia.org/wiki/Логистическая_регрессия'>Логистическая регрессия</a></th><th><a href='https://ru.wikipedia.org/wiki/Дерево_принятия_решений'>Регрессионное дерево</a></th><th><a href='https://ru.wikipedia.org/wiki/Random_forest'>Случайный лес</a></th></tr><tr><td><code><pre>library(ROCR)
+library(caTools)
+
+# загрузка данных
+data=read.csv('data.csv')
+# деление данных на обучающую/тестовую выборку
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# построение модели
+data.model=mean(data.train$y)
+# предсказание вероятностей на обучающей выборке
+data.train.prob=rep_len(data.model,nrow(data.train))
+# предсказание классов на обучающей выборке
+data.train.class=+(data.train.prob>=0.5)
+# точность (accuracy) на обучающей выборке
+data.train.acc=mean(data.train$y==data.train.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на обучающей выборке
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# предсказание вероятностей на тестовой выборке
+data.test.prob=rep_len(data.model,nrow(data.test))
+# предсказание классов на тестовой выборке
+data.test.class=+(data.test.prob>=0.5)
+# точность (accuracy) на тестовой выборке
+data.test.acc=mean(data.test$y==data.test.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на тестовой выборке
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td><td><code><pre>library(ROCR)
+library(caTools)
+
+# загрузка данных
+data=read.csv('data.csv')
+# деление данных на обучающую/тестовую выборку
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# построение модели
+data.model=glm(y~.,data=data.train,family=binomial)
+# предсказание вероятностей на обучающей выборке
+data.train.prob=predict(data.model,type='response')
+# предсказание классов на обучающей выборке
+data.train.class=+(data.train.prob>=0.5)
+# точность (accuracy) на обучающей выборке
+data.train.acc=mean(data.train$y==data.train.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на обучающей выборке
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# предсказание вероятностей на тестовой выборке
+data.test.prob=predict(data.model,newdata=data.test,type='response')
+# предсказание классов на тестовой выборке
+data.test.class=+(data.test.prob>=0.5)
+# точность (accuracy) на тестовой выборке
+data.test.acc=mean(data.test$y==data.test.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на тестовой выборке
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td><td><code><pre>library(ROCR)
+library(caTools)
+library(rpart)
+
+# загрузка данных
+data=read.csv('data.csv')
+# деление данных на обучающую/тестовую выборку
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# построение модели
+data.model=rpart(y~.,data=data.train)
+# предсказание вероятностей на обучающей выборке
+data.train.prob=predict(data.model)
+# предсказание классов на обучающей выборке
+data.train.class=+(data.train.prob>=0.5)
+# точность (accuracy) на обучающей выборке
+data.train.acc=mean(data.train$y==data.train.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на обучающей выборке
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# предсказание вероятностей на тестовой выборке
+data.test.prob=predict(data.model,newdata=data.test)
+# предсказание классов на тестовой выборке
+data.test.class=+(data.test.prob>=0.5)
+# точность (accuracy) на тестовой выборке
+data.test.acc=mean(data.test$y==data.test.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на тестовой выборке
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td><td><code><pre>library(ROCR)
+library(caTools)
+library(randomForest)
+
+# загрузка данных
+data=read.csv('data.csv')
+# деление данных на обучающую/тестовую выборку
+set.seed(123)
+split=sample.split(data$y,SplitRatio=0.7)
+data.train=data[split,]
+data.test=data[!split,]
+# построение модели
+set.seed(456)
+data.model=randomForest(y~.,data=data.train)
+# предсказание вероятностей на обучающей выборке
+data.train.prob=predict(data.model)
+# предсказание классов на обучающей выборке
+data.train.class=+(data.train.prob>=0.5)
+# точность (accuracy) на обучающей выборке
+data.train.acc=mean(data.train$y==data.train.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на обучающей выборке
+data.train.auc=performance(
+	prediction(data.train.prob,data.train$y),'auc'
+)@y.values[[1]]
+# предсказание вероятностей на тестовой выборке
+data.test.prob=predict(data.model,newdata=data.test)
+# предсказание классов на тестовой выборке
+data.test.class=+(data.test.prob>=0.5)
+# точность (accuracy) на тестовой выборке
+data.test.acc=mean(data.test$y==data.test.class)
+# <a href='https://ru.wikipedia.org/wiki/ROC-кривая#.D0.9F.D0.BB.D0.BE.D1.89.D0.B0.D0.B4.D1.8C_.D0.BF.D0.BE.D0.B4_.D0.BA.D1.80.D0.B8.D0.B2.D0.BE.D0.B9'>AUC</a> на тестовой выборке
+data.test.auc=performance(
+	prediction(data.test.prob,data.test$y),'auc'
+)@y.values[[1]]</pre></code></td></tr></table></section></body></html>
