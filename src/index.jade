@@ -9,12 +9,16 @@ html(lang=pageLang)
 		style.
 			nav {
 				background: #BCF;
+				overflow: auto;
 			}
 			nav ul {
 				display: inline-block;
 				list-style: none;
 				margin: 0;
 				padding: .5em;
+			}
+			nav ul.external {
+				float: right;
 			}
 			nav li {
 				display: inline-block;
@@ -41,6 +45,9 @@ html(lang=pageLang)
 					li.active= lang.name
 				else
 					li: a(href='../../'+lang.code+'/'+pageTemplate+'/',lang=lang.code,hreflang=lang.code)= lang.name
+			ul.external
+				li: a(href='https://github.com/AntonKhorev/statistics-classification-binary') source code
+				li: a(href='https://github.com/AntonKhorev/statistics-classification-binary/issues') report issues
 		section.statistics-classification-binary(data-storage='statistics-classification-binary')
 			block contents
 				= jsStub
