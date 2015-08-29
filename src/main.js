@@ -23,6 +23,39 @@ $('.statistics-classification-binary').each(function(){
 			localStorage[options.html.storage]=JSON.stringify(options.code);
 		}
 	}
+	function showHideSuboptionInputs(optionName,optionValue) {
+		containerNode.find(".code-options [data-option^='"+optionName+".']").show()
+			.not("[data-option^='"+optionName+"."+optionValue+".']").hide();
+	}
+	function createOptionInput(optionName) {
+		function openClose(inputTag) {
+			return $(inputTag).on('input',function(){
+				options.code[optionName]=this.value;
+				applyCodeOptions();
+			});
+		}
+		function select(){
+			return $("<select>").append(options.code[optionName+'AvailableValues'].map(function(optionAvailableValue){
+				return $("<option>").val(optionAvailableValue).html(options.i18n('options.code.'+optionName+'.'+optionAvailableValue));
+			})).on('change',function(){
+				options.code[optionName]=this.value;
+				showHideSuboptionInputs(optionName,this.value);
+				applyCodeOptions();
+			});
+		}
+		if (optionName=='postprocess') {
+			return openClose("<textarea spellcheck='false'>");
+		} else if (optionName=='split') {
+			return select();
+		} else if (optionName=='splitRandomSeed') {
+			return openClose("<input type='number'>");
+		} else if (optionName=='splitRandomRatio' || optionName=='threshold') {
+			return openClose("<input type='number' min='0' max='1' step='any'>");
+		} else {
+			return openClose("<input type='text'>");
+		}
+	}
+	// all inputs with restored/default values
 	containerNode.find('.code-options [data-option]').each(function(){
 		// TODO why parsing out stuff when can just regenerate with inputs instead of generateHtml() with static html?
 		var div=$(this);
@@ -34,41 +67,18 @@ $('.statistics-classification-binary').each(function(){
 			newLabel.attr('title',labelTitle);
 		}
 		label.replaceWith(newLabel);
-
-		function createOptionInput(optionName) {
-			function openClose(inputTag) {
-				return $(inputTag).on('input',function(){
-					options.code[optionName]=this.value;
-					applyCodeOptions();
-				});
-			}
-			function select(){
-				return $("<select>").append(options.code[optionName+'AvailableValues'].map(function(optionAvailableValue){
-					return $("<option>").val(optionAvailableValue).html(options.i18n('options.code.'+optionName+'.'+optionAvailableValue));
-				})).on('change',function(){
-					options.code[optionName]=this.value;
-					containerNode.find(".code-options [data-option^='"+optionName+".']").show()
-						.not("[data-option^='"+optionName+"."+this.value+".']").hide();
-					applyCodeOptions();
-				});
-			}
-			if (optionName=='postprocess') {
-				return openClose("<textarea spellcheck='false'>");
-			} else if (optionName=='split') {
-				return select();
-			} else if (optionName=='splitRandomSeed') {
-				return openClose("<input type='number'>");
-			} else if (optionName=='splitRandomRatio' || optionName=='threshold') {
-				return openClose("<input type='number' min='0' max='1' step='any'>");
-			} else {
-				return openClose("<input type='text'>");
-			}
-		}
-
 		var code=div.find('code');
 		code.replaceWith(
 			createOptionInput(div.attr('data-option')).attr('id',id).val(code.text())
 		);
+	});
+	// hide inputs related to options that are not selected
+	containerNode.find('.code-options [data-option]').each(function(){
+		var div=$(this);
+		var select=div.find('select');
+		if (select.length) {
+			showHideSuboptionInputs(div.attr('data-option'),select.val());
+		}
 	});
 	containerNode.find('.code-options').append(
 		$("<div class='code-input' />").append(
