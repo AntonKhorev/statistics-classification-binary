@@ -84,16 +84,16 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			this.filename='data.csv';
 			this.postprocess='';
 			this.split='random';
-			this.splitConditionalCondition='t<0';
-			this.splitRandomSeed='123';
-			this.splitRandomRatio='0.7';
+			this['split.conditional.condition']='t<0';
+			this['split.random.seed']='123';
+			this['split.random.ratio']='0.7';
 			this.formula='y~.';
 			this.threshold='0.5'; // 0.0 or 1.0 for skipping probability predictions
 			this.forestSeed='456';
 		},
 		userOptionNames:[
 			'filename','postprocess',
-			'split','splitConditionalCondition','splitRandomSeed','splitRandomRatio',
+			'split','split.conditional.condition','split.random.seed','split.random.ratio',
 			'formula','threshold','forestSeed'
 		],
 		splitAvailableValues:['none','conditional','random'],

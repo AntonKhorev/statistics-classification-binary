@@ -47,7 +47,8 @@ $('.statistics-classification-binary').each(function(){
 					return $("<option>").val(optionAvailableValue).html(options.i18n('options.code.'+optionName+'.'+optionAvailableValue));
 				})).on('change',function(){
 					options.code[optionName]=this.value;
-					// TODO hide inputs for other split modes
+					containerNode.find(".code-options [data-option^='"+optionName+".']").show()
+						.not("[data-option^='"+optionName+"."+this.value+".']").hide();
 					applyCodeOptions();
 				});
 			}

@@ -64,8 +64,8 @@ Model.prototype.generateLines=function(){
 	} else if (code.split=='conditional') {
 		lines=lines.concat([
 			this.comment('split'),
-			e(data.train)+"=subset("+e(data)+","+e(code.splitConditionalCondition)+")",
-			e(data.test)+"=subset("+e(data)+",!("+e(code.splitConditionalCondition)+"))",
+			e(data.train)+"=subset("+e(data)+","+e(code['split.conditional.condition'])+")",
+			e(data.test)+"=subset("+e(data)+",!("+e(code['split.conditional.condition'])+"))",
 		]);
 		concatModelLines.call(this,data.train);
 		concatPostModelLines.call(this,data.train,'data.train');
@@ -73,8 +73,8 @@ Model.prototype.generateLines=function(){
 	} else if (code.split=='random') {
 		lines=lines.concat([
 			this.comment('split'),
-			"set.seed("+e(code.splitRandomSeed)+")",
-			"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRandomRatio)+")",
+			"set.seed("+e(code['split.random.seed'])+")",
+			"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code['split.random.ratio'])+")",
 			e(data.train)+"="+e(data)+"[split,]",
 			e(data.test)+"="+e(data)+"[!split,]",
 		]);
