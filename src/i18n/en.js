@@ -18,8 +18,10 @@ i18ns.data.en={
 	'options.code.split.random.seed':'Split seed',
 	'options.code.split.random.ratio':'Split ratio',
 	'options.code.formula':'Formula',
-	'options.code.threshold':'Classification probability threshold', // not quite sure
-	'options.code.threshold.title':'Set to 0 or 1 to avoid calculating probabilities and AUCs',
+	'options.code.predict':'Model predicts',
+	'options.code.predict.class':'classes',
+	'options.code.predict.probability':'probabilities',
+	'options.code.predict.probability.threshold':'Classification probability threshold', // not quite sure
 	'options.code.forestSeed':'Random forest seed',
 	'Reset options':'Reset options',
 	// code comments

@@ -52,9 +52,6 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			});
 			return o;
 		},
-		get needProb(){
-			return this.threshold>0.0 && this.threshold<1.0;
-		},
 		get y(){
 			var i=this.formula.indexOf('~');
 			if (i>=0) {
@@ -88,15 +85,19 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			this['split.random.seed']='123';
 			this['split.random.ratio']='0.7';
 			this.formula='y~.';
-			this.threshold='0.5'; // 0.0 or 1.0 for skipping probability predictions
+			this.predict='probability';
+			this['predict.probability.threshold']='0.5';
 			this.forestSeed='456';
 		},
 		userOptionNames:[
 			'filename','postprocess',
 			'split','split.conditional.condition','split.random.seed','split.random.ratio',
-			'formula','threshold','forestSeed'
+			'formula',
+			'predict','predict.probability.threshold',
+			'forestSeed'
 		],
 		splitAvailableValues:['none','conditional','random'],
+		predictAvailableValues:['class','probability'],
 	};
 	codeOptions.reset();
 	for (k in userCodeOptions) {
@@ -135,7 +136,7 @@ function generateHtml(options) {
 		"<div class='code-options'>"+
 			options.code.userOptionNames.map(function(optionName){
 				return "<div class='code-input' data-option='"+optionName+"'>"+
-					"<span class='label'"+(optionName=='threshold'?" title='"+options.i18n('options.code.'+optionName+'.title')+"'":"")+">"+options.i18n('options.code.'+optionName)+":</span> "+
+					"<span class='label'>"+options.i18n('options.code.'+optionName)+":</span> "+
 					"<code>"+htmlEncode(options.code[optionName])+"</code>"+
 					"</div>";
 			}).join("")+

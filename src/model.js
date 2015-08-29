@@ -12,7 +12,7 @@ Model.prototype.generateLines=function(){
 
 	function concatModelLines(data) {
 		lines=lines.concat([this.comment('data.model')]);
-		if (code.needProb) {
+		if (code.predict=='probability') {
 			lines=lines.concat(this.generateProbModelLines(data));
 		} else {
 			lines=lines.concat(this.generateClassModelLines(data));
@@ -20,7 +20,7 @@ Model.prototype.generateLines=function(){
 	}
 	function concatPostModelLines(data,dataset) {
 		var isNewdata=dataset=='data.test';
-		if (code.needProb) {
+		if (code.predict=='probability') {
 			lines=lines.concat(
 				[this.comment(dataset+'.prob')],
 				this.generateProbLines(data,isNewdata),
@@ -37,7 +37,7 @@ Model.prototype.generateLines=function(){
 			[this.comment(dataset+'.acc')],
 			this.generateAccLines(data)
 		);
-		if (code.needProb) {
+		if (code.predict=='probability') {
 			lines=lines.concat(
 				[this.comment(dataset+'.auc')],
 				this.generateAucLines(data)
@@ -88,7 +88,7 @@ Model.prototype.generateClassFromProbLines=function(data){
 	var e=this.options.encode;
 	var code=this.options.code;
 	return [
-		e(data['class'])+"=+("+e(data.prob)+">="+e(code.threshold)+")",
+		e(data['class'])+"=+("+e(data.prob)+">="+e(code['predict.probability.threshold'])+")",
 	];
 };
 Model.prototype.generateAccLines=function(data){
@@ -109,7 +109,7 @@ Model.prototype.generateAucLines=function(data){
 };
 Model.prototype.listLibraries=function(){
 	libs=[];
-	if (this.options.code.needProb) {
+	if (this.options.code.predict=='probability') {
 		libs.push('ROCR'); // for AUC computation
 	}
 	if (this.options.code.split=='random') {
@@ -196,10 +196,10 @@ var CartModel=function(options){
 CartModel.prototype=Object.create(Model.prototype);
 CartModel.prototype.constructor=CartModel;
 CartModel.prototype.getNameId=function(){
-	if (this.options.code.needProb) {
-		return 'model.cart.prob';
-	} else {
+	if (this.options.code.predict=='class') {
 		return 'model.cart.class';
+	} else if (this.options.code.predict=='probability') {
+		return 'model.cart.prob';
 	}
 };
 CartModel.prototype.generateProbModelLines=function(data){

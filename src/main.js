@@ -45,7 +45,7 @@ $('.statistics-classification-binary').each(function(){
 		}
 		if (optionName=='postprocess') {
 			return openClose("<textarea spellcheck='false'>");
-		} else if (optionName=='split') {
+		} else if (optionName=='split' || optionName=='predict') {
 			return select();
 		} else if (optionName=='split.random.seed') {
 			return openClose("<input type='number'>");
