@@ -23,7 +23,7 @@ nav li.active {
 	nav {
 		display: none;
 	}
-}</style></head><body><nav><ul><li><a href="../empty/">Javascript only</a></li><li class="active">Static HTML</li></ul><ul><li class="active">English</li><li><a href="../../ru/static/" lang="ru" hreflang="ru">Русский</a></li></ul><ul class="external"><li><a href="https://github.com/AntonKhorev/statistics-classification-binary">source code</a></li><li><a href="https://github.com/AntonKhorev/statistics-classification-binary/issues">report issues</a></li></ul></nav><section data-storage="statistics-classification-binary" class="statistics-classification-binary"><h1><a href='https://en.wikipedia.org/wiki/Binary_classification'>Binary classification</a></h1><div class='code-options'><div class='code-input' data-option='filename'><span class='label'>Input filename:</span> <code>data.csv</code></div><div class='code-input' data-option='postprocess'><span class='label'>Data postprocessing code:</span> <code></code></div><div class='code-input' data-option='formula'><span class='label'>Formula:</span> <code>y~.</code></div><div class='code-input' data-option='splitSeed'><span class='label'><a href='https://en.wikipedia.org/wiki/Test_set'>Training/test set</a> split seed:</span> <code>123</code></div><div class='code-input' data-option='splitRatio'><span class='label' title='Set to 0 or 1 to avoid splitting'><a href='https://en.wikipedia.org/wiki/Test_set'>Training/test set</a> split ratio:</span> <code>0.7</code></div><div class='code-input' data-option='threshold'><span class='label' title='Set to 0 or 1 to avoid calculating probabilities and AUCs'>Classification probability threshold:</span> <code>0.5</code></div><div class='code-input' data-option='forestSeed'><span class='label'>Random forest seed:</span> <code>456</code></div></div><table><tr><th>Baseline method</th><th><a href='https://en.wikipedia.org/wiki/Logistic_regression'>Logistic regression</a></th><th><a href='https://en.wikipedia.org/wiki/Decision_tree_learning'>Regression tree</a></th><th><a href='https://en.wikipedia.org/wiki/Random_forest'>Random forest</a></th></tr><tr><td><code><pre>library(ROCR)
+}</style></head><body><nav><ul><li><a href="../empty/">Javascript only</a></li><li class="active">Static HTML</li></ul><ul><li class="active">English</li><li><a href="../../ru/static/" lang="ru" hreflang="ru">Русский</a></li></ul><ul class="external"><li><a href="https://github.com/AntonKhorev/statistics-classification-binary">source code</a></li><li><a href="https://github.com/AntonKhorev/statistics-classification-binary/issues">report issues</a></li></ul></nav><section data-storage="statistics-classification-binary" class="statistics-classification-binary"><h1><a href='https://en.wikipedia.org/wiki/Binary_classification'>Binary classification</a></h1><div class='code-options'><div class='code-input' data-option='filename'><span class='label'>Input filename:</span> <code>data.csv</code></div><div class='code-input' data-option='postprocess'><span class='label'>Data postprocessing code:</span> <code></code></div><div class='code-input' data-option='split'><span class='label'><a href='https://en.wikipedia.org/wiki/Test_set'>Training/test set</a> split:</span> <code>random</code></div><div class='code-input' data-option='split.conditional.condition'><span class='label'>Training set condition:</span> <code>t&lt;0</code></div><div class='code-input' data-option='split.random.seed'><span class='label'>Split seed:</span> <code>123</code></div><div class='code-input' data-option='split.random.ratio'><span class='label'>Split ratio:</span> <code>0.7</code></div><div class='code-input' data-option='formula'><span class='label'>Formula:</span> <code>y~.</code></div><div class='code-input' data-option='predict'><span class='label'>Model predicts:</span> <code>probability</code></div><div class='code-input' data-option='predict.probability.threshold'><span class='label'>Classification probability threshold:</span> <code>0.5</code></div><div class='code-input' data-option='forestSeed'><span class='label'>Random forest seed:</span> <code>456</code></div></div><table><tr><th>Baseline method</th><th><a href='https://en.wikipedia.org/wiki/Logistic_regression'>Logistic regression</a></th><th><a href='https://en.wikipedia.org/wiki/Decision_tree_learning'>Regression tree</a></th><th><a href='https://en.wikipedia.org/wiki/Random_forest'>Random forest</a></th></tr><tr><td><code><pre>library(ROCR)
 library(caTools)
 
 # load data
@@ -41,6 +41,10 @@ data.train.prob=rep_len(data.model,nrow(data.train))
 data.train.class=+(data.train.prob>=0.5)
 # training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.train.sen=mean(data.train.class[data.train$y==1]==1)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.train.spe=mean(data.train.class[data.train$y==0]==0)
 # training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.train.auc=performance(
 	prediction(data.train.prob,data.train$y),'auc'
@@ -51,6 +55,10 @@ data.test.prob=rep_len(data.model,nrow(data.test))
 data.test.class=+(data.test.prob>=0.5)
 # test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.test.sen=mean(data.test.class[data.test$y==1]==1)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.test.spe=mean(data.test.class[data.test$y==0]==0)
 # test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.test.auc=performance(
 	prediction(data.test.prob,data.test$y),'auc'
@@ -72,6 +80,10 @@ data.train.prob=predict(data.model,type='response')
 data.train.class=+(data.train.prob>=0.5)
 # training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.train.sen=mean(data.train.class[data.train$y==1]==1)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.train.spe=mean(data.train.class[data.train$y==0]==0)
 # training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.train.auc=performance(
 	prediction(data.train.prob,data.train$y),'auc'
@@ -82,6 +94,10 @@ data.test.prob=predict(data.model,newdata=data.test,type='response')
 data.test.class=+(data.test.prob>=0.5)
 # test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.test.sen=mean(data.test.class[data.test$y==1]==1)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.test.spe=mean(data.test.class[data.test$y==0]==0)
 # test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.test.auc=performance(
 	prediction(data.test.prob,data.test$y),'auc'
@@ -104,6 +120,10 @@ data.train.prob=predict(data.model)
 data.train.class=+(data.train.prob>=0.5)
 # training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.train.sen=mean(data.train.class[data.train$y==1]==1)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.train.spe=mean(data.train.class[data.train$y==0]==0)
 # training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.train.auc=performance(
 	prediction(data.train.prob,data.train$y),'auc'
@@ -114,6 +134,10 @@ data.test.prob=predict(data.model,newdata=data.test)
 data.test.class=+(data.test.prob>=0.5)
 # test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.test.sen=mean(data.test.class[data.test$y==1]==1)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.test.spe=mean(data.test.class[data.test$y==0]==0)
 # test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.test.auc=performance(
 	prediction(data.test.prob,data.test$y),'auc'
@@ -137,6 +161,10 @@ data.train.prob=predict(data.model)
 data.train.class=+(data.train.prob>=0.5)
 # training set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.train.acc=mean(data.train$y==data.train.class)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.train.sen=mean(data.train.class[data.train$y==1]==1)
+# training set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.train.spe=mean(data.train.class[data.train$y==0]==0)
 # training set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.train.auc=performance(
 	prediction(data.train.prob,data.train$y),'auc'
@@ -147,6 +175,10 @@ data.test.prob=predict(data.model,newdata=data.test)
 data.test.class=+(data.test.prob>=0.5)
 # test set <a href='https://en.wikipedia.org/wiki/Accuracy_and_precision#In_binary_classification'>accuracy</a>
 data.test.acc=mean(data.test$y==data.test.class)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Sensitivity'>sensitivity</a>
+data.test.sen=mean(data.test.class[data.test$y==1]==1)
+# test set <a href='https://en.wikipedia.org/wiki/Sensitivity_and_specificity#Specificity'>specificity</a>
+data.test.spe=mean(data.test.class[data.test$y==0]==0)
 # test set <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve'>AUC</a>
 data.test.auc=performance(
 	prediction(data.test.prob,data.test$y),'auc'
