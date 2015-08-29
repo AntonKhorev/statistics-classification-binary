@@ -37,15 +37,24 @@ $('.statistics-classification-binary').each(function(){
 
 		function createOptionInput(optionName,optionValue) {
 			function openClose(inputTagOpen,inputTagClose) {
-				return $(inputTagOpen+htmlEncode(optionValue)+inputTagClose).attr('id',id).on('input',function(){ // TODO htmlencode value
+				return $(inputTagOpen+htmlEncode(optionValue)+inputTagClose).attr('id',id).on('input',function(){
 					options.code[optionName]=this.value;
 					applyCodeOptions();
-				})
+				});
+			}
+			function select(){
+				return $("<select>").append(options.code[optionName+'AvailableValues'].map(function(optionAvailableValue){
+					return $("<option>").val(optionAvailableValue).html(options.i18n('options.code.'+optionName+'.'+optionAvailableValue));
+				})).val(optionValue).attr('id',id).on('change',function(){
+					options.code[optionName]=this.value;
+					// TODO hide inputs for other split modes
+					applyCodeOptions();
+				});
 			}
 			if (optionName=='postprocess') {
 				return openClose("<textarea spellcheck='false'>","</textarea>");
 			} else if (optionName=='split') {
-				return $("<select><option>TODO</option></select>");
+				return select();
 			} else if (optionName=='splitRandomSeed') {
 				return openClose("<input type='number' value='","' />");
 			} else if (optionName=='splitRandomRatio' || optionName=='threshold') {
@@ -56,7 +65,9 @@ $('.statistics-classification-binary').each(function(){
 		}
 
 		var code=div.find('code');
-		code.replaceWith(createOptionInput(div.attr('data-option'),code.text()));
+		code.replaceWith(
+			createOptionInput(div.attr('data-option'),code.text())
+		);
 	});
 	containerNode.find('.code-options').append(
 		$("<div class='code-input' />").append(

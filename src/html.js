@@ -83,7 +83,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 		reset:function(){
 			this.filename='data.csv';
 			this.postprocess='';
-			this.split='random'; // none, conditional, random
+			this.split='random';
 			this.splitConditionalCondition='t<0';
 			this.splitRandomSeed='123';
 			this.splitRandomRatio='0.7';
@@ -96,6 +96,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			'split','splitConditionalCondition','splitRandomSeed','splitRandomRatio',
 			'threshold','forestSeed'
 		],
+		splitAvailableValues:['none','conditional','random'],
 	};
 	codeOptions.reset();
 	for (k in userCodeOptions) {

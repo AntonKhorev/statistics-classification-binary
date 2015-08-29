@@ -22,6 +22,9 @@ i18ns.data.ru={
 	'options.code.postprocess':'Код для обработки данных',
 	'options.code.formula':'Формула',
 	'options.code.split':'Деление на обучающую/тестовую выборку',
+	'options.code.split.none':'нет',
+	'options.code.split.conditional':'по условию',
+	'options.code.split.random':'случайное',
 	'options.code.splitConditionalCondition':'Условие попадания в обучающую выборку',
 	'options.code.splitRandomSeed':'Инициализация (seed) деления на выборки', // http://www.machinelearning.ru/wiki/index.php?title=%D0%92%D1%8B%D0%B1%D0%BE%D1%80%D0%BA%D0%B0
 	'options.code.splitRandomRatio':'Доля обучающей выборки при делении',
