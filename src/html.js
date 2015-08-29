@@ -135,7 +135,7 @@ function generateHtml(options) {
 		"<div class='code-options'>"+
 			options.code.userOptionNames.map(function(optionName){
 				return "<div class='code-input' data-option='"+optionName+"'>"+
-					"<span class='label'"+(optionName=='splitRatio'||optionName=='threshold'?" title='"+options.i18n('options.code.'+optionName+'.title')+"'":"")+">"+options.i18n('options.code.'+optionName)+":</span> "+
+					"<span class='label'"+(optionName=='threshold'?" title='"+options.i18n('options.code.'+optionName+'.title')+"'":"")+">"+options.i18n('options.code.'+optionName)+":</span> "+
 					"<code>"+htmlEncode(options.code[optionName])+"</code>"+
 					"</div>";
 			}).join("")+
