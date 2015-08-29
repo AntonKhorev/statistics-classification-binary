@@ -35,7 +35,11 @@ Model.prototype.generateLines=function(){
 		}
 		lines=lines.concat(
 			[this.comment(dataset+'.acc')],
-			this.generateAccLines(data)
+			this.generateAccLines(data),
+			[this.comment(dataset+'.sen')],
+			this.generateSenLines(data),
+			[this.comment(dataset+'.spe')],
+			this.generateSpeLines(data)
 		);
 		if (code.predict=='probability') {
 			lines=lines.concat(
@@ -96,6 +100,20 @@ Model.prototype.generateAccLines=function(data){
 	var code=this.options.code;
 	return [
 		e(data.acc)+"=mean("+e(data)+"$"+e(code.y)+"=="+e(data['class'])+")",
+	];
+};
+Model.prototype.generateSenLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data.sen)+"=mean("+e(data['class'])+"["+e(data)+"$"+e(code.y)+"==1]==1)",
+	];
+};
+Model.prototype.generateSpeLines=function(data){
+	var e=this.options.encode;
+	var code=this.options.code;
+	return [
+		e(data.spe)+"=mean("+e(data['class'])+"["+e(data)+"$"+e(code.y)+"==0]==0)",
 	];
 };
 Model.prototype.generateAucLines=function(data){

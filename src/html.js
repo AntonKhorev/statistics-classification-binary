@@ -36,7 +36,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 					return dataname;
 				},
 			};
-			['model','prob','class','acc','auc'].forEach(function(prop){
+			['model','prob','class','acc','sen','spe','auc'].forEach(function(prop){
 				o[prop]=dataname+'.'+prop;
 			});
 			['train','test'].forEach(function(set){
@@ -46,7 +46,7 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 					},
 				};
 				o[set].model=dataname+'.model'; // one model for both train/test sets
-				['prob','class','acc','auc'].forEach(function(prop){ // different data for train/test sets
+				['prob','class','acc','sen','spe','auc'].forEach(function(prop){ // different data for train/test sets
 					o[set][prop]=dataname+'.'+set+'.'+prop;
 				});
 			});
