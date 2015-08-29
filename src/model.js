@@ -58,20 +58,29 @@ Model.prototype.generateLines=function(){
 			e(code.postprocess),
 		]);
 	}
-	if (code.needSplit) {
+	if (code.split=='none') {
+		concatModelLines.call(this,data);
+		concatPostModelLines.call(this,data,'data');
+	} else if (code.split=='conditional') {
 		lines=lines.concat([
 			this.comment('split'),
-			"set.seed("+e(code.splitSeed)+")",
-			"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRatio)+")",
+			e(data.train)+"=subset("+e(data)+","+e(code.splitConditionalCondition)+")",
+			e(data.test)+"=subset("+e(data)+",!("+e(code.splitConditionalCondition)+"))",
+		]);
+		concatModelLines.call(this,data.train);
+		concatPostModelLines.call(this,data.train,'data.train');
+		concatPostModelLines.call(this,data.test,'data.test');
+	} else if (code.split=='random') {
+		lines=lines.concat([
+			this.comment('split'),
+			"set.seed("+e(code.splitRandomSeed)+")",
+			"split=sample.split("+e(data)+"$"+e(code.y)+",SplitRatio="+e(code.splitRandomRatio)+")",
 			e(data.train)+"="+e(data)+"[split,]",
 			e(data.test)+"="+e(data)+"[!split,]",
 		]);
 		concatModelLines.call(this,data.train);
 		concatPostModelLines.call(this,data.train,'data.train');
 		concatPostModelLines.call(this,data.test,'data.test');
-	} else {
-		concatModelLines.call(this,data);
-		concatPostModelLines.call(this,data,'data');
 	}
 	return lines;
 };
@@ -103,7 +112,7 @@ Model.prototype.listLibraries=function(){
 	if (this.options.code.needProb) {
 		libs.push('ROCR'); // for AUC computation
 	}
-	if (this.options.code.needSplit) {
+	if (this.options.code.split=='random') {
 		libs.push('caTools');
 	}
 	return libs;

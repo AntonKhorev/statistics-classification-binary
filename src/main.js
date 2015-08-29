@@ -34,25 +34,29 @@ $('.statistics-classification-binary').each(function(){
 			newLabel.attr('title',labelTitle);
 		}
 		label.replaceWith(newLabel);
-		var optionName=div.attr('data-option');
-		var code=div.find('code');
-		var optionValue=code.text();
-		var inputTagOpen="<input type='text' value='";
-		var inputTagClose="' />";
-		if (optionName=='postprocess') {
-			inputTagOpen="<textarea spellcheck='false'>";
-			inputTagClose="</textarea>";
-		} else if (optionName=='splitSeed') {
-			inputTagOpen="<input type='number' value='";
-		} else if (optionName=='splitRatio' || optionName=='threshold') {
-			inputTagOpen="<input type='number' min='0' max='1' step='any' value='";
+
+		function createOptionInput(optionName,optionValue) {
+			function openClose(inputTagOpen,inputTagClose) {
+				return $(inputTagOpen+htmlEncode(optionValue)+inputTagClose).attr('id',id).on('input',function(){ // TODO htmlencode value
+					options.code[optionName]=this.value;
+					applyCodeOptions();
+				})
+			}
+			if (optionName=='postprocess') {
+				return openClose("<textarea spellcheck='false'>","</textarea>");
+			} else if (optionName=='split') {
+				return $("<select><option>TODO</option></select>");
+			} else if (optionName=='splitRandomSeed') {
+				return openClose("<input type='number' value='","' />");
+			} else if (optionName=='splitRandomRatio' || optionName=='threshold') {
+				return openClose("<input type='number' min='0' max='1' step='any' value='","' />");
+			} else {
+				return openClose("<input type='text' value='","' />");
+			}
 		}
-		code.replaceWith(
-			$(inputTagOpen+htmlEncode(optionValue)+inputTagClose).attr('id',id).on('input',function(){ // TODO htmlencode value
-				options.code[optionName]=this.value;
-				applyCodeOptions();
-			})
-		);
+
+		var code=div.find('code');
+		code.replaceWith(createOptionInput(div.attr('data-option'),code.text()));
 	});
 	containerNode.find('.code-options').append(
 		$("<div class='code-input' />").append(

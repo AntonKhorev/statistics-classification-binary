@@ -11,9 +11,10 @@ i18ns.data.en={
 	'options.code.filename':'Input filename',
 	'options.code.postprocess':'Data postprocessing code',
 	'options.code.formula':'Formula',
-	'options.code.splitSeed':'[[Test set|Training/test set]] split seed',
-	'options.code.splitRatio':'[[Test set|Training/test set]] split ratio',
-	'options.code.splitRatio.title':'Set to 0 or 1 to avoid splitting',
+	'options.code.split':'[[Test set|Training/test set]] split',
+	'options.code.splitConditionalCondition':'Training set condition',
+	'options.code.splitRandomSeed':'Split seed',
+	'options.code.splitRandomRatio':'Split ratio',
 	'options.code.threshold':'Classification probability threshold', // not quite sure
 	'options.code.threshold.title':'Set to 0 or 1 to avoid calculating probabilities and AUCs',
 	'options.code.forestSeed':'Random forest seed',

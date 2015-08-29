@@ -52,9 +52,6 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			});
 			return o;
 		},
-		get needSplit(){
-			return this.splitRatio>0.0 && this.splitRatio<1.0;
-		},
 		get needProb(){
 			return this.threshold>0.0 && this.threshold<1.0;
 		},
@@ -86,13 +83,19 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 		reset:function(){
 			this.filename='data.csv';
 			this.postprocess='';
-			this.splitSeed='123';
-			this.splitRatio='0.7'; // 0.0 or 1.0 for no split
+			this.split='random'; // none, conditional, random
+			this.splitConditionalCondition='t<0';
+			this.splitRandomSeed='123';
+			this.splitRandomRatio='0.7';
 			this.formula='y~.';
 			this.threshold='0.5'; // 0.0 or 1.0 for skipping probability predictions
 			this.forestSeed='456';
 		},
-		userOptionNames:['filename','postprocess','formula','splitSeed','splitRatio','threshold','forestSeed'],
+		userOptionNames:[
+			'filename','postprocess','formula',
+			'split','splitConditionalCondition','splitRandomSeed','splitRandomRatio',
+			'threshold','forestSeed'
+		],
 	};
 	codeOptions.reset();
 	for (k in userCodeOptions) {
