@@ -92,9 +92,9 @@ function getOptions(userHtmlOptions,userCodeOptions) {
 			this.forestSeed='456';
 		},
 		userOptionNames:[
-			'filename','postprocess','formula',
+			'filename','postprocess',
 			'split','splitConditionalCondition','splitRandomSeed','splitRandomRatio',
-			'threshold','forestSeed'
+			'formula','threshold','forestSeed'
 		],
 		splitAvailableValues:['none','conditional','random'],
 	};
