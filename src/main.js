@@ -35,9 +35,9 @@ $('.statistics-classification-binary').each(function(){
 		}
 		label.replaceWith(newLabel);
 
-		function createOptionInput(optionName,optionValue) {
-			function openClose(inputTagOpen,inputTagClose) {
-				return $(inputTagOpen+htmlEncode(optionValue)+inputTagClose).attr('id',id).on('input',function(){
+		function createOptionInput(optionName) {
+			function openClose(inputTag) {
+				return $(inputTag).on('input',function(){
 					options.code[optionName]=this.value;
 					applyCodeOptions();
 				});
@@ -45,28 +45,28 @@ $('.statistics-classification-binary').each(function(){
 			function select(){
 				return $("<select>").append(options.code[optionName+'AvailableValues'].map(function(optionAvailableValue){
 					return $("<option>").val(optionAvailableValue).html(options.i18n('options.code.'+optionName+'.'+optionAvailableValue));
-				})).val(optionValue).attr('id',id).on('change',function(){
+				})).on('change',function(){
 					options.code[optionName]=this.value;
 					// TODO hide inputs for other split modes
 					applyCodeOptions();
 				});
 			}
 			if (optionName=='postprocess') {
-				return openClose("<textarea spellcheck='false'>","</textarea>");
+				return openClose("<textarea spellcheck='false'>");
 			} else if (optionName=='split') {
 				return select();
 			} else if (optionName=='splitRandomSeed') {
-				return openClose("<input type='number' value='","' />");
+				return openClose("<input type='number'>");
 			} else if (optionName=='splitRandomRatio' || optionName=='threshold') {
-				return openClose("<input type='number' min='0' max='1' step='any' value='","' />");
+				return openClose("<input type='number' min='0' max='1' step='any'>");
 			} else {
-				return openClose("<input type='text' value='","' />");
+				return openClose("<input type='text'>");
 			}
 		}
 
 		var code=div.find('code');
 		code.replaceWith(
-			createOptionInput(div.attr('data-option'),code.text())
+			createOptionInput(div.attr('data-option')).attr('id',id).val(code.text())
 		);
 	});
 	containerNode.find('.code-options').append(
