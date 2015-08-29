@@ -47,9 +47,9 @@ $('.statistics-classification-binary').each(function(){
 			return openClose("<textarea spellcheck='false'>");
 		} else if (optionName=='split') {
 			return select();
-		} else if (optionName=='splitRandomSeed') {
+		} else if (optionName=='split.random.seed') {
 			return openClose("<input type='number'>");
-		} else if (optionName=='splitRandomRatio' || optionName=='threshold') {
+		} else if (optionName=='split.random.ratio' || optionName=='threshold') {
 			return openClose("<input type='number' min='0' max='1' step='any'>");
 		} else {
 			return openClose("<input type='text'>");
